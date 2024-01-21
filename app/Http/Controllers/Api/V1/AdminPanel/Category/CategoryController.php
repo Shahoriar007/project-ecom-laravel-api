@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers\Api\V1\AdminPanel\Category;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\Response;
+use App\Repositories\AdminPanel\Category\CategoryRepository;
+use App\Http\Requests\AdminPanel\Category\StoreCategoryRequest;
+use App\Http\Requests\AdminPanel\Category\UpdateCategoryRequest;
+use App\Transformers\AdminPanel\Category\CategoryTransformer;
 
 class CategoryController extends Controller
 {
@@ -12,11 +17,35 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    private CategoryRepository $repository;
+
+    public function __construct(CategoryRepository $repository)
     {
-        //
+        $this->repository = $repository;
+    }
+    public function index(Request $request)
+    {
+        $show = $request->input('show', 10);
+        $sort = $request->input('sort', []);
+        $search = $request->input('q');
+
+        $data = $this->repository->index($show, $sort, $search);
+        return $this->response->paginator($data, new CategoryTransformer());
     }
 
+    public function all()
+    {
+        $data = $this->repository->all();
+        return $this->response->collection($data, new CategoryTransformer());
+    }
+
+    public function activeAll()
+    {
+        $data = $this->repository->activeAll();
+
+        return $this->response->collection($data, new CategoryTransformer());
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -33,11 +62,13 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
-        //
-    }
+        $validated = $request->validated();
+        $data = $this->repository->store($validated, $request);
 
+        return $this->response->item($data, new CategoryTransformer())->setStatusCode(201);
+    }
     /**
      * Display the specified resource.
      *
@@ -47,6 +78,9 @@ class CategoryController extends Controller
     public function show($id)
     {
         //
+        $data = $this->repository->findById($id);
+
+        return $this->response->item($data, new CategoryTransformer());
     }
 
     /**
@@ -67,9 +101,11 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
-        //
+        $validated = $request->validated();
+        $data = $this->repository->update($id, $validated, $request);
+        return $this->response->item($data, new CategoryTransformer())->setStatusCode(200);
     }
 
     /**
@@ -80,6 +116,8 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->repository->delete($id);
+
+        return $this->response()->noContent();
     }
 }

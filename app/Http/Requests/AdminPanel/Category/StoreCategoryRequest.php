@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Designation;
+namespace App\Http\Requests\AdminPanel\Category;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreDesignationRequest extends FormRequest
+class StoreCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,9 +24,11 @@ class StoreDesignationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string',  'unique:designations,name', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'employee_type_id' => ['nullable', 'exists:employee_types,id'],
+            //
+            'name' => 'required|string|max:255',
+            'status' => 'required|boolean',
+            'description' => 'required|string',
+            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
 }

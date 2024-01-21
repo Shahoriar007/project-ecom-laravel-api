@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Designation;
+namespace App\Http\Requests\AdminPanel\Category;
 
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateDesignationRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +24,10 @@ class UpdateDesignationRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string',  'max:255', Rule::unique('designations')->ignore($this->designation)],
-            'description' => ['nullable', 'string'],
-            'employee_type_id' => ['nullable', 'exists:employee_types,id'],
+            'name' => 'required|string|max:255',
+            'status' => 'required|boolean',
+            'description' => 'required|string',
+            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
 }
