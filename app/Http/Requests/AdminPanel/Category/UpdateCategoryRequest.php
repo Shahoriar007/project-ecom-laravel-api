@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AdminPanel\Category;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCategoryRequest extends FormRequest
@@ -24,7 +25,7 @@ class UpdateCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($this->category)],
             'status' => 'required|boolean',
             'description' => 'required|string',
             'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
