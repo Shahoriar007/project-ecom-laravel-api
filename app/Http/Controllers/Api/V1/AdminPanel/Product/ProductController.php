@@ -1,28 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\AdminPanel\Product;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\AttendanceStatusRepository;
-use App\Transformers\AttendanceStatusTransformer;
 use Illuminate\Http\Request;
 
-class AttendanceStatusController extends Controller
+class ProductController extends Controller
 {
-
-    private AttendanceStatusRepository $repository;
-
-    public function __construct(AttendanceStatusRepository $repository)
-    {
-        $this->repository = $repository;
-    }
-
-    public function all()
-    {
-        $data = $this->repository->all();
-        return $this->response->collection($data, new AttendanceStatusTransformer());
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -30,8 +14,7 @@ class AttendanceStatusController extends Controller
      */
     public function index()
     {
-        $data =  $this->repository->index();
-        return $this->response->collection($data, new AttendanceStatusTransformer());
+        //
     }
 
     /**
