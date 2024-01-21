@@ -42,11 +42,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia
         'email',
         'password',
         'status',
-        'created_by',
-        'designation_id',
-        'department_id',
-        'created_by',
-        'gender'
     ];
 
     /**
@@ -74,43 +69,6 @@ class User extends Authenticatable implements JWTSubject, HasMedia
     public function scopeActive($query)
     {
         return $query->where('status', true);
-    }
-
-    // public function divisionHead()
-    // {
-    //     return $this->belongsTo(Division::class, 'id', 'head_id');
-    // }
-
-    // public function departmentHead()
-    // {
-    //     return $this->belongsTo(Department::class, 'id', 'head_id');
-    // }
-
-    // public function userDepartment()
-    // {
-    //     return $this->belongsTo(Department::class, 'department_id', 'id');
-    // }
-
-    public function department()
-    {
-        return $this->belongsTo(Department::class, 'department_id', 'id');
-    }
-
-
-    public function designation()
-    {
-        return $this->belongsTo(Designation::class, 'designation_id', 'id');
-    }
-
-
-    public function attendances()
-    {
-        return $this->hasMany(Attendance::class, 'user_id', 'id');
-    }
-
-    public function leaveRequests()
-    {
-        return $this->hasMany(LeaveRequest::class, 'user_id', 'id');
     }
 
     public function setPasswordAttribute($value)

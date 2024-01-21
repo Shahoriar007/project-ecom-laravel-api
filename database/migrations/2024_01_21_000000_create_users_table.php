@@ -15,16 +15,14 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('designation_id')->nullable()->comment('from designations table');
-            $table->unsignedBigInteger('created_by')->nullable()->comment('from users table');
-            $table->unsignedBigInteger('department_id')->nullable()->comment('from departments table');
 
             $table->string('name')->index();
             $table->string('email')->unique();
-            $table->enum('gender', ['Male', 'Female'])->default('Male');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->boolean('status')->default(1);
+            $table->unsignedBigInteger('created_by')->nullable()->comment('from users table');
+            // $table->unsignedBigInteger('updated_by')->nullable()->comment('from users table');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

@@ -28,8 +28,6 @@ class StoreUserRequest extends FormRequest
             'email' => ['required', 'email', 'unique:users,email'],
             'status' => ['required', 'boolean'],
             'role_id' => ['required', 'exists:roles,id'],
-            'designation_id' => ['required', 'exists:designations,id'],
-            'gender' => 'in:Male,Female',
             'password' => ['required', 'min:6', 'confirmed'],
             'password_confirmation' => ['required'],
         ];
