@@ -29,42 +29,7 @@ class UserSeeder extends Seeder
 
 
             ],
-            [
 
-                'name' => 'nahiyan',
-                'email' => 'nahiyan@gmail.com',
-                'password' => Hash::make('123456'),
-
-            ],
-            [
-                'name' => 'hanif',
-                'email' => 'hanif@gmail.com',
-                'password' => Hash::make('123456'),
-
-            ], [
-                'name' => 'asif',
-                'email' => 'asif@gmail.com',
-                'password' => Hash::make('123456'),
-
-            ],
-            [
-                'name' => 'Arif',
-                'email' => 'arif@gmail.com',
-                'password' => Hash::make('123456'),
-
-            ],
-            [
-                'name' => 'Abir',
-                'email' => 'abir@gmail.com',
-                'password' => Hash::make('123456'),
-
-            ],
-            [
-                'name' => 'Sara',
-                'email' => 'sara@gmail.com',
-                'password' => Hash::make('123456'),
-
-            ]
         ];
 
         foreach ($users as $item) {

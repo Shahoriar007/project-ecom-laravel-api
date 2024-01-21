@@ -28,13 +28,6 @@ class DatabaseSeeder extends Seeder
 
             PermissionSeeder::class,
             UserSeeder::class,
-            EngineerSeeder::class,
-            DivisionSeeder::class,
-            DepartmentSeeder::class,
-            DesignationSeeder::class,
-            LeaveTypeSeeder::class,
-            AttendanceStatusSeeder::class,
-            EmployeeTypeSeeder::class,
             SettingSeeder::class,
 
         ]);

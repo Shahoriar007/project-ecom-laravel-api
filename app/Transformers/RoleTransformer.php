@@ -14,7 +14,7 @@ class RoleTransformer extends TransformerAbstract
         return [
             'id' => $role->id,
             'name' => $role->name,
-            'priority' => $role->priority,
+
             'created_at' =>  $role->created_at ? $role->created_at->toFormattedDateString() : null,
             'users_count' => $role->users_count,
         ];
