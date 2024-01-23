@@ -4,19 +4,21 @@ namespace App\Models;
 
 use App\Traits\CreatedBy;
 use App\Traits\UpdatedBy;
+use Illuminate\Support\Str;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Product extends Model
+class Product extends Model implements HasMedia
 {
     use HasFactory;
-    use CreatedBy;
-    use UpdatedBy;
     use InteractsWithMedia;
 
     protected $fillable = [
         'name',
+        'slug',
+        'status',
         'offer_notice',
         'price',
         'regular_price',
@@ -32,13 +34,21 @@ class Product extends Model
         'updated_by',
     ];
 
+    public static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->slug = Str::slug($product->name);
+        });
+
+        static::updating(function ($product) {
+            $product->slug = Str::slug($product->name);
+        });
+    }
+
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
-    }
-
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('product-images');
     }
 }

@@ -24,7 +24,7 @@ class StoreProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|unique:products,name|max:255',
             'status' => 'required|boolean',
             'description' => 'required|string',
             'offer_notice' => 'required|string',
@@ -33,12 +33,13 @@ class StoreProductRequest extends FormRequest
             'sale_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
             'sku_code' => 'required|string|max:255',
-            'is_flash_sale' => 'boolean',
-            'is_new_arrival' => 'boolean',
-            'is_hot_deal' => 'boolean',
-            'is_for_you' => 'boolean',
+            'is_flash_sale' => 'required|boolean',
+            'is_new_arrival' => 'required|boolean',
+            'is_hot_deal' => 'required|boolean',
+            'is_for_you' => 'required|boolean',
             'category_id' => 'required|exists:categories,id',
-            'product_images' => 'required|image|mimes:png,jpg,jpeg|max:2048'
+            'images' => 'required|array',
+            'image*' => 'required|image|mimes:png,jpg,jpeg|max:2048'
             // Add any other validation rules as needed
             // 'image', 'mimes:png,jpg,jpeg', 'max:2048'
         ];
