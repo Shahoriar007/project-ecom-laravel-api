@@ -1,7 +1,8 @@
 <?php
 
 
-namespace App\Repositories\AdminPanel\Category;
+namespace App\Repositories\AdminPanel\Product;
+
 
 
 use Carbon\Carbon;
@@ -88,21 +89,28 @@ class ProductRepository
                     [
                         ...$validated,
                         'status' => to_boolean($validated['status']),
+                        'is_flash_sale' => to_boolean($validated['is_flash_sale']),
+                        'is_new_arrival' => to_boolean($validated['is_new_arrival']),
+                        'is_hot_deal' => to_boolean($validated['is_hot_deal']),
+                        'is_for_you' => to_boolean($validated['is_for_you']),
                         'created_by' => auth()->user()->id
                     ]
                 );
 
-                if ($request->hasFile('image')) {
-                    $media = $model->addMediaFromRequest('image')->toMediaCollection('category_image');
-                    $model->category_image_url = $media->getUrl();
-                }
+                if ($request->hasFile('images')) {
+                    if ($files =  $request->file('images')) {
+                        foreach ($files as $file) {
 
+                            $model->addMedia($file)->toMediaCollection('product_images');
+                        }
+                    }
+                }
                 return $model;
             });
         } catch (\Throwable $th) {
 
             info($th);
-            throw new StoreResourceFailedException('Category Create Failed');
+            throw new StoreResourceFailedException('Product Create Failed');
         }
     }
 
@@ -113,29 +121,50 @@ class ProductRepository
             $model = $this->model->findOrFail($id);
             info($model);
         } catch (\Throwable $th) {
-            throw new NotFoundHttpException('Category Not Found');
+            throw new NotFoundHttpException('Product Not Found');
         }
 
 
         try {
 
             DB::transaction(function () use ($model, $request, $validated) {
-                if ($request->hasFile('image')) {
 
-                    $model->clearMediaCollection('category_image');
-                    $model->addMediaFromRequest('image')->toMediaCollection('category_image');
+
+                $oldImageIds = [];
+                foreach ($model->getMedia('product_images')->toArray() as $image) {
+                    $oldImageIds[] = $image['id'];
                 }
-                $model->update($validated);
-            });
-            $data = $model->fresh();
-            if ($data->hasMedia('category_image')) {
-                $data['category_image_url'] = $data->getFirstMediaUrl('category_image');
-            }
 
-            return $data;
+                foreach ($oldImageIds as $id) {
+                    $media = $model->getMedia('product_images')->where('id', $id)->first();
+                    if ($media) {
+                        $media->delete();
+                    }
+                }
+
+                if ($request->hasFile('images')) {
+                    if ($files =  $request->file('images')) {
+                        foreach ($files as $file) {
+                            $model->addMedia($file)->toMediaCollection('product_images');
+                        }
+                    }
+                }
+
+                $model->update([
+                    ...$validated,
+                    'status' => to_boolean($validated['status']),
+                    'is_flash_sale' => to_boolean($validated['is_flash_sale']),
+                    'is_new_arrival' => to_boolean($validated['is_new_arrival']),
+                    'is_hot_deal' => to_boolean($validated['is_hot_deal']),
+                    'is_for_you' => to_boolean($validated['is_for_you']),
+                    'updated_by' => auth()->user()->id
+                ]);
+            });
+
+            return $model->fresh();
         } catch (\Throwable $th) {
             info($th);
-            throw new UpdateResourceFailedException('Update Error');
+            throw new UpdateResourceFailedException('Product Update Error');
         }
     }
 
@@ -153,31 +182,7 @@ class ProductRepository
         try {
             $data->delete();
         } catch (\Throwable $th) {
-
-            throw new DeleteResourceFailedException('Delete Failed');
+            throw new DeleteResourceFailedException('Product Delete Failed');
         }
     }
-
-    // public function forceDelete($id)
-    // {
-
-
-    //     try {
-    //         $user = $this->findById($id);
-    //     } catch (\Throwable $th) {
-
-    //         throw new NotFoundHttpException('Not Found');
-    //     }
-
-    //     try {
-    //         $user->forceDelete();
-    //     } catch (\Throwable $th) {
-
-    //         throw new DeleteResourceFailedException('Delete Failed');
-    //     }
-    // }
-
-
-
-
 }

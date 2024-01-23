@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\AdminPanel\Product;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductRequest extends FormRequest
@@ -24,7 +25,7 @@ class UpdateProductRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($this->product)],
             'status' => 'required|boolean',
             'description' => 'required|string',
             'offer_notice' => 'required|string',
@@ -38,7 +39,8 @@ class UpdateProductRequest extends FormRequest
             'is_hot_deal' => 'boolean',
             'is_for_you' => 'boolean',
             'category_id' => 'required|exists:categories,id',
-            'product_images' => 'required|image|mimes:png,jpg,jpeg|max:2048'
+            'images' => 'required|array',
+            'image*' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
 }
