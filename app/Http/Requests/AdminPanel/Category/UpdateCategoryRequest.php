@@ -28,7 +28,15 @@ class UpdateCategoryRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($this->category)],
             'status' => 'required|boolean',
             'description' => 'required|string',
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
+            'image' => 'required_if:image_exists,false|image|mimes:png,jpg,jpeg|max:2048',
+            'image_exists' => 'boolean'
+        ];
+    }
+    public function messages()
+    {
+        return [
+            'image.required_if' => 'The image field is required',
+
         ];
     }
 }

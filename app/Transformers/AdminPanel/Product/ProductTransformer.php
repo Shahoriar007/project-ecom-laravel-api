@@ -18,6 +18,7 @@ class ProductTransformer extends TransformerAbstract
             'name' => $product->name,
             'status' => $product->status,
             'slug' => $product->slug,
+            'description' => $product->description,
             'product_image_urls' => $product->getMedia('product_images'),
             'offer_notice' => $product->offer_notice,
             'price' => $product->price,
