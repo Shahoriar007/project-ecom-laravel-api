@@ -42,25 +42,45 @@ class PermissionSeeder extends Seeder
                 // ['name' => PermissionsService::USERS_PROFILE_EDIT, 'group' => 'others', 'guard_name' => 'api'],
             ],
 
+            'Categories' => [
+                ['name' => PermissionsService::CATEGORIES_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CATEGORIES_CREATE, 'group' => 'create', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CATEGORIES_SHOW, 'group' => 'show', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CATEGORIES_EDIT, 'group' => 'edit', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CATEGORIES_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
+
+            ],
+            'Products' => [
+                ['name' => PermissionsService::PRODUCTS_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::PRODUCTS_CREATE, 'group' => 'create', 'guard_name' => 'api'],
+                ['name' => PermissionsService::PRODUCTS_SHOW, 'group' => 'show', 'guard_name' => 'api'],
+                ['name' => PermissionsService::PRODUCTS_EDIT, 'group' => 'edit', 'guard_name' => 'api'],
+                ['name' => PermissionsService::PRODUCTS_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
+
+            ],
+
 
         ];
 
+
         foreach ($modules as $key => $permissions) {
-            $module = Module::create(['name' => $key]);
-            foreach ($permissions as $permission)
-                Permission::create([
+            $module = Module::updateOrCreate(['name' => $key], ['name' => $key]);
+
+            foreach ($permissions as $permission) {
+                Permission::updateOrCreate([
+                    'name' => $permission['name'],
+                ], [
                     'name' => $permission['name'],
                     'group' => $permission['group'],
                     'guard_name' => $permission['guard_name'],
                     'module_id' => $module->id
                 ]);
+            }
         }
 
+        // // $permissions = [];
 
-
-        // Permission::insert($permissions);
-
-        $role = Role::create(['name' => RolesService::ADMIN]);
+        $role = Role::updateOrCreate(['name' => RolesService::ADMIN], ['name' => RolesService::ADMIN]);
         $permissions = Permission::all();
         $role->givePermissionTo($permissions);
     }
