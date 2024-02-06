@@ -3,13 +3,14 @@
 namespace App\Transformers\AdminPanel\Product;
 
 use App\Models\Product;
-
+use App\Transformers\AdminPanel\Label\LabelTransformer;
 use League\Fractal\TransformerAbstract;
 
 
 class ProductTransformer extends TransformerAbstract
 {
 
+    protected $availableIncludes = ['labels'];
 
     public function transform(Product $product)
     {
@@ -19,6 +20,7 @@ class ProductTransformer extends TransformerAbstract
             'status' => $product->status,
             'slug' => $product->slug,
             'description' => $product->description,
+            'labels' => $product->labels,
             'product_image_urls' => $product->getMedia('product_images'),
             'offer_notice' => $product->offer_notice,
             'price' => $product->price,
@@ -37,5 +39,12 @@ class ProductTransformer extends TransformerAbstract
             'created_at' =>  $product->created_at,
             'updated_at' =>  $product->updated_at,
         ];
+    }
+
+    public function includeLabels(Product $product)
+    {
+        if (isset($product->labels)) {
+            return $this->collection($product->labels, new LabelTransformer());
+        }
     }
 }
