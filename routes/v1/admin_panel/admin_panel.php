@@ -4,3 +4,5 @@
 require __DIR__ . '/category/category.php';
 //product route
 require __DIR__ . '/product/product.php';
+// label route
+require __DIR__ . '/label/label.php';

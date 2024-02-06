@@ -28,7 +28,6 @@ class StoreProductRequest extends FormRequest
             'status' => 'required|boolean',
             'description' => 'required|string',
             'offer_notice' => 'required|string',
-            'price' => 'required|numeric|min:0',
             'regular_price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
@@ -39,9 +38,10 @@ class StoreProductRequest extends FormRequest
             'is_for_you' => 'required|boolean',
             'category_id' => 'required|exists:categories,id',
             'images' => 'required|array',
-            'image*' => 'required|image|mimes:png,jpg,jpeg|max:2048'
-            // Add any other validation rules as needed
-            // 'image', 'mimes:png,jpg,jpeg', 'max:2048'
+            'images*' => 'required|image|mimes:png,jpg,jpeg|max:2048',
+            'labels' => 'required|array',
+            'labels*' => 'required|string',
+
         ];
     }
 }

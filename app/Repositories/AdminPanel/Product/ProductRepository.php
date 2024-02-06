@@ -7,8 +7,9 @@ namespace App\Repositories\AdminPanel\Product;
 
 use Carbon\Carbon;
 
-use App\Models\Category;
+use App\Models\Label;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Dingo\Api\Exception\StoreResourceFailedException;
@@ -20,12 +21,15 @@ class ProductRepository
 {
 
     private Product $model;
+    private Label $labelModel;
 
     public function __construct(
         Product $model,
+        Label $labelModel
 
     ) {
         $this->model = $model;
+        $this->labelModel = $labelModel;
     }
 
     public function all()
@@ -33,16 +37,13 @@ class ProductRepository
         try {
             return $this->model->all();
         } catch (\Throwable $th) {
-
             throw new NotFoundHttpException('Not Found');
         }
     }
 
     public function index($show, $sort, $search)
     {
-
-
-        $query  = $this->model->query();
+        $query  = $this->model->query()->with('labels');
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
@@ -82,13 +83,19 @@ class ProductRepository
     public function store($validated, $request)
     {
         try {
-
-
             return  DB::transaction(function () use ($validated, $request) {
+
                 $model = $this->model->create(
                     [
-                        ...$validated,
+                        'name' => $validated['name'],
+                        'category_id' => $validated['category_id'],
                         'status' => to_boolean($validated['status']),
+                        'description' => $validated['description'],
+                        'offer_notice' => $validated['offer_notice'],
+                        'regular_price' => $validated['regular_price'],
+                        'sale_price' => $validated['sale_price'],
+                        'quantity' => $validated['quantity'],
+                        'sku_code' => $validated['sku_code'],
                         'is_flash_sale' => to_boolean($validated['is_flash_sale']),
                         'is_new_arrival' => to_boolean($validated['is_new_arrival']),
                         'is_hot_deal' => to_boolean($validated['is_hot_deal']),
@@ -97,10 +104,17 @@ class ProductRepository
                     ]
                 );
 
+                foreach ($validated['labels'] as $name) {
+                    $label =  $this->labelModel->updateOrCreate(
+                        ['name' => $name],
+                        ['name' => $name]
+                    );
+                    $model->labels()->attach($label->id);
+                }
+
                 if ($request->hasFile('images')) {
                     if ($files =  $request->file('images')) {
                         foreach ($files as $file) {
-
                             $model->addMedia($file)->toMediaCollection('product_images');
                         }
                     }
@@ -128,19 +142,20 @@ class ProductRepository
         try {
 
             DB::transaction(function () use ($model, $request, $validated) {
-
-
                 $oldImageIds = [];
                 foreach ($model->getMedia('product_images')->toArray() as $image) {
                     $oldImageIds[] = $image['id'];
                 }
 
-                foreach ($oldImageIds as $id) {
-                    $media = $model->getMedia('product_images')->where('id', $id)->first();
-                    if ($media) {
-                        $media->delete();
+                if ($validated['remove_all_image']) {
+                    foreach ($oldImageIds as $id) {
+                        $media = $model->getMedia('product_images')->where('id', $id)->first();
+                        if ($media) {
+                            $media->delete();
+                        }
                     }
                 }
+
 
                 if ($request->hasFile('images')) {
                     if ($files =  $request->file('images')) {
@@ -151,14 +166,34 @@ class ProductRepository
                 }
 
                 $model->update([
-                    ...$validated,
+                    'name' => $validated['name'],
+                    'category_id' => $validated['category_id'],
                     'status' => to_boolean($validated['status']),
+                    'description' => $validated['description'],
+                    'offer_notice' => $validated['offer_notice'],
+                    'regular_price' => $validated['regular_price'],
+                    'sale_price' => $validated['sale_price'],
+                    'quantity' => $validated['quantity'],
+                    'sku_code' => $validated['sku_code'],
                     'is_flash_sale' => to_boolean($validated['is_flash_sale']),
                     'is_new_arrival' => to_boolean($validated['is_new_arrival']),
                     'is_hot_deal' => to_boolean($validated['is_hot_deal']),
                     'is_for_you' => to_boolean($validated['is_for_you']),
                     'updated_by' => auth()->user()->id
                 ]);
+
+                $labelIds = [];
+                foreach ($validated['labels'] as $name) {
+
+                    $label =  $this->labelModel->where('name', $name)->first();
+                    if ($label == null) {
+                        $label =  $this->labelModel->create(
+                            ['name' => $name]
+                        );
+                    }
+                    $labelIds[] = $label->id;
+                }
+                $model->labels()->sync($labelIds);
             });
 
             return $model->fresh();

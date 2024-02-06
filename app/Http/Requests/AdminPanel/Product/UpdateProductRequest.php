@@ -29,7 +29,6 @@ class UpdateProductRequest extends FormRequest
             'status' => 'required|boolean',
             'description' => 'required|string',
             'offer_notice' => 'required|string',
-            'price' => 'required|numeric|min:0',
             'regular_price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
@@ -39,8 +38,20 @@ class UpdateProductRequest extends FormRequest
             'is_hot_deal' => 'boolean',
             'is_for_you' => 'boolean',
             'category_id' => 'required|exists:categories,id',
-            'images' => 'required|array',
-            'image*' => 'required|image|mimes:png,jpg,jpeg|max:2048'
+            'images' => 'required_if:image_exists,false|array',
+            'images*' => 'required_if:image_exists,false|image|mimes:png,jpg,jpeg|max:2048',
+            'labels' => 'required|array',
+            'labels*' => 'required|string',
+            'image_exists' => 'boolean',
+            'remove_all_image' => 'boolean'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'images.required_if' => 'The image field is required',
+
         ];
     }
 }

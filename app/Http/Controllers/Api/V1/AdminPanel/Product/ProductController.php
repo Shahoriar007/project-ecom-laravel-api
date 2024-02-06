@@ -29,6 +29,7 @@ class ProductController extends Controller
         $search = $request->input('q');
 
         $data = $this->repository->index($show, $sort, $search);
+
         return $this->response->paginator($data, new ProductTransformer());
     }
 
