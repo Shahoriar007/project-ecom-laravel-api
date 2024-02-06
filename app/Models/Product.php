@@ -58,4 +58,9 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsToMany(Label::class);
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(Order::class, 'order_product', 'order_id', 'product_id');
+    }
 }
