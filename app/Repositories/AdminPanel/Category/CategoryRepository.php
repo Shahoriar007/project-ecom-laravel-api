@@ -20,10 +20,8 @@ class CategoryRepository
 
     private Category $model;
 
-    public function __construct(
-        Category $model,
-
-    ) {
+    public function __construct(Category $model)
+    {
         $this->model = $model;
     }
 
