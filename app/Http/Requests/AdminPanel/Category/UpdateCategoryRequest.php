@@ -29,6 +29,7 @@ class UpdateCategoryRequest extends FormRequest
             'status' => 'required|boolean',
             'description' => 'required|string',
             'image' => 'required_if:image_exists,false|image|mimes:png,jpg,jpeg|max:2048',
+            'parent_name' => 'required|string',
             'image_exists' => 'boolean'
         ];
     }
