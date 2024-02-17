@@ -19,6 +19,9 @@ class Category extends Model implements HasMedia
 
     protected $fillable = [
         'name',
+        'slug',
+        'parent_name',
+        'disabled',
         'description',
         'is_featured',
         'slug',
@@ -34,17 +37,19 @@ class Category extends Model implements HasMedia
         parent::boot();
 
         static::creating(function ($category) {
-            $category->slug = Str::slug($category->name);
+            $slug = $category->name . ' ' . uniqid();
+            $category->slug = Str::slug($slug);
         });
 
         static::updating(function ($category) {
-            $category->slug = Str::slug($category->name);
+            $slug = $category->name . ' ' . uniqid();
+            $category->slug = Str::slug($slug);
         });
     }
 
 
-    public function products()
+    public function categories()
     {
-        return $this->hasMany(Product::class, 'category_id', 'id');
+        return $this->belongsToMany(Product::class, 'category_product');
     }
 }

@@ -19,19 +19,25 @@ class Product extends Model implements HasMedia
     protected $fillable = [
         'name',
         'slug',
-        'status',
-        'description',
-        'offer_notice',
         'price',
-        'regular_price',
+        'sku',
+        'stock',
+        'short_description',
+        'offer_notice',
         'sale_price',
-        'quantity',
-        'sku_code',
-        'is_flash_sale',
-        'is_new_arrival',
-        'is_hot_deal',
+        'sale_count',
+        'status',
+        'ratings',
+        'is_hot',
+        'is_sale',
+        'is_new',
+        'is_out_of_stock',
         'is_for_you',
-        'category_id',
+        'release_date',
+        'developer',
+        'publisher',
+        'rated',
+        'until',
         'created_by',
         'updated_by',
     ];
@@ -41,17 +47,19 @@ class Product extends Model implements HasMedia
         parent::boot();
 
         static::creating(function ($product) {
-            $product->slug = Str::slug($product->name);
+            $slug = $product->name . ' ' . uniqid();
+            $product->slug = Str::slug($slug);
         });
 
         static::updating(function ($product) {
-            $product->slug = Str::slug($product->name);
+            $slug = $product->name . ' ' . uniqid();
+            $product->slug = Str::slug($slug);
         });
     }
 
-    public function category()
+    public function categories()
     {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
+        return $this->belongsToMany(Category::class, 'category_product');
     }
 
     public function labels()

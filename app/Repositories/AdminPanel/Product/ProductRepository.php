@@ -43,7 +43,7 @@ class ProductRepository
 
     public function index($show, $sort, $search)
     {
-        $query  = $this->model->query()->with('labels');
+        $query  = $this->model->query()->with(['labels', 'categories']);
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
@@ -88,21 +88,28 @@ class ProductRepository
                 $model = $this->model->create(
                     [
                         'name' => $validated['name'],
-                        'category_id' => $validated['category_id'],
-                        'status' => to_boolean($validated['status']),
-                        'description' => $validated['description'],
+                        'price' => $validated['price'],
+                        'sku' => $validated['sku'],
+                        'stock' => $validated['stock'],
+                        'short_description' => $validated['short_description'],
                         'offer_notice' => $validated['offer_notice'],
-                        'regular_price' => $validated['regular_price'],
+                        'status' => to_boolean($validated['status']),
                         'sale_price' => $validated['sale_price'],
-                        'quantity' => $validated['quantity'],
-                        'sku_code' => $validated['sku_code'],
-                        'is_flash_sale' => to_boolean($validated['is_flash_sale']),
-                        'is_new_arrival' => to_boolean($validated['is_new_arrival']),
-                        'is_hot_deal' => to_boolean($validated['is_hot_deal']),
+                        'is_hot' => to_boolean($validated['is_hot']),
+                        'is_sale' => to_boolean($validated['is_sale']),
+                        'is_new' => to_boolean($validated['is_new']),
                         'is_for_you' => to_boolean($validated['is_for_you']),
                         'created_by' => auth()->user()->id
                     ]
                 );
+
+                $categoryIds = [];
+                foreach ($validated['category_id'] as $id) {
+                    $categoryIds[] = $id;
+                }
+
+
+                $model->categories()->attach($categoryIds);
 
                 foreach ($validated['labels'] as $name) {
                     $label =  $this->labelModel->updateOrCreate(
@@ -112,10 +119,17 @@ class ProductRepository
                     $model->labels()->attach($label->id);
                 }
 
-                if ($request->hasFile('images')) {
-                    if ($files =  $request->file('images')) {
+                if ($request->hasFile('small_pictures')) {
+                    if ($files =  $request->file('small_pictures')) {
                         foreach ($files as $file) {
-                            $model->addMedia($file)->toMediaCollection('product_images');
+                            $model->addMedia($file)->toMediaCollection('small_pictures');
+                        }
+                    }
+                }
+                if ($request->hasFile('large_pictures')) {
+                    if ($files =  $request->file('large_pictures')) {
+                        foreach ($files as $file) {
+                            $model->addMedia($file)->toMediaCollection('large_pictures');
                         }
                     }
                 }
