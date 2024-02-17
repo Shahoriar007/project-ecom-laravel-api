@@ -17,7 +17,9 @@ class CreateCategoriesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('slug');
+            $table->string('parent_name');
             $table->text('description');
+            $table->boolean('disabled')->default(true);
             $table->boolean('status')->default(true);
             $table->boolean('is_featured')->default(false);
             $table->unsignedBigInteger('created_by')->nullable()->comment('from users table');
