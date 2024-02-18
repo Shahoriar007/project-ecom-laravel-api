@@ -105,7 +105,6 @@ class CategoryRepository
 
         try {
             $model = $this->model->findOrFail($id);
-            info($model);
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Category Not Found');
         }

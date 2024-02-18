@@ -59,6 +59,7 @@ class ProductRepository
 
     public function activeAll()
     {
+
         return $this->model->where('status', true)->get();
     }
 
@@ -147,7 +148,6 @@ class ProductRepository
 
         try {
             $model = $this->model->findOrFail($id);
-            info($model);
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Product Not Found');
         }
@@ -157,13 +157,13 @@ class ProductRepository
 
             DB::transaction(function () use ($model, $request, $validated) {
                 $oldImageIds = [];
-                foreach ($model->getMedia('product_images')->toArray() as $image) {
+                foreach ($model->getMedia('large_pictures')->toArray() as $image) {
                     $oldImageIds[] = $image['id'];
                 }
 
                 if ($validated['remove_all_image']) {
                     foreach ($oldImageIds as $id) {
-                        $media = $model->getMedia('product_images')->where('id', $id)->first();
+                        $media = $model->getMedia('large_pictures')->where('id', $id)->first();
                         if ($media) {
                             $media->delete();
                         }
@@ -171,30 +171,36 @@ class ProductRepository
                 }
 
 
-                if ($request->hasFile('images')) {
-                    if ($files =  $request->file('images')) {
+                if ($request->hasFile('large_pictures')) {
+                    if ($files =  $request->file('large_pictures')) {
                         foreach ($files as $file) {
-                            $model->addMedia($file)->toMediaCollection('product_images');
+                            $model->addMedia($file)->toMediaCollection('large_pictures');
                         }
                     }
                 }
 
                 $model->update([
                     'name' => $validated['name'],
-                    'category_id' => $validated['category_id'],
                     'status' => to_boolean($validated['status']),
-                    'description' => $validated['description'],
+                    'short_description' => $validated['short_description'],
                     'offer_notice' => $validated['offer_notice'],
-                    'regular_price' => $validated['regular_price'],
+                    'price' => $validated['price'],
                     'sale_price' => $validated['sale_price'],
-                    'quantity' => $validated['quantity'],
-                    'sku_code' => $validated['sku_code'],
-                    'is_flash_sale' => to_boolean($validated['is_flash_sale']),
-                    'is_new_arrival' => to_boolean($validated['is_new_arrival']),
-                    'is_hot_deal' => to_boolean($validated['is_hot_deal']),
+                    'stock' => $validated['stock'],
+                    'sku' => $validated['sku'],
+                    'is_hot' => to_boolean($validated['is_hot']),
+                    'is_sale' => to_boolean($validated['is_sale']),
+                    'is_new' => to_boolean($validated['is_new']),
                     'is_for_you' => to_boolean($validated['is_for_you']),
                     'updated_by' => auth()->user()->id
                 ]);
+
+
+                $categoryIds = [];
+                foreach ($validated['category_id'] as $id) {
+                    $categoryIds[] = $id;
+                }
+                $model->categories()->sync($categoryIds);
 
                 $labelIds = [];
                 foreach ($validated['labels'] as $name) {
