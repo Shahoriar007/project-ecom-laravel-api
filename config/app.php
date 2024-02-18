@@ -179,7 +179,7 @@ return [
         Spatie\Permission\PermissionServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
-
+        Intervention\Image\ImageServiceProvider::class,
     ],
 
     /*
@@ -238,7 +238,7 @@ return [
 
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
-
+        'Image' => Intervention\Image\Facades\Image::class,
     ],
 
 ];
