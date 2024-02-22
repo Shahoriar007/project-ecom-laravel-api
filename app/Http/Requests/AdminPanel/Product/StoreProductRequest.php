@@ -38,8 +38,6 @@ class StoreProductRequest extends FormRequest
             'is_for_you' => 'required|boolean',
             'category_id' => 'required|array',
             'category_id*' => ['required', 'exists:categories,id'],
-            'small_pictures' => 'required|array',
-            'small_pictures*' => 'required|image|mimes:png,jpg,jpeg|max:2048',
             'large_pictures' => 'required|array',
             'large_pictures*' => 'required|image|mimes:png,jpg,jpeg|max:2048',
             'labels' => 'required|array',

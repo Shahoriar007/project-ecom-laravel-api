@@ -117,4 +117,10 @@ class ProductController extends Controller
         $this->repository->delete($id);
         return $this->response()->noContent();
     }
+
+    public function showWithSlug($slug)
+    {
+        $data = $this->repository->showWithSlug($slug);
+        return $this->response->item($data, new ProductTransformer());
+    }
 }

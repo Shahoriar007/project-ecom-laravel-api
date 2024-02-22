@@ -3,8 +3,9 @@
 namespace App\Transformers\AdminPanel\Product;
 
 use App\Models\Product;
-use App\Transformers\AdminPanel\Label\LabelTransformer;
+use Intervention\Image\Facades\Image;
 use League\Fractal\TransformerAbstract;
+use App\Transformers\AdminPanel\Label\LabelTransformer;
 
 
 class ProductTransformer extends TransformerAbstract
@@ -14,6 +15,8 @@ class ProductTransformer extends TransformerAbstract
 
     public function transform(Product $product)
     {
+
+
         return [
             'id' => $product->id,
             'name' => $product->name,
@@ -40,8 +43,7 @@ class ProductTransformer extends TransformerAbstract
             'labels' => $product->labels,
             'product_categories' => $product->categories,
             'large_pictures' => $product->getMedia('large_pictures'),
-            'small_pictures' => $product->getMedia('small_pictures'),
-            'category_id' => $product->category_id,
+            'small_pictures' =>  $product->getMedia('large_pictures'),
             'created_by' => $product->created_by,
             'updated_by' => $product->updated_by,
             'created_at' =>  $product->created_at,

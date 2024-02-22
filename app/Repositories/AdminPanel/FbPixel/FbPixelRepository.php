@@ -20,15 +20,32 @@ class FbPixelRepository
     private FbPixel $model;
 
     public function __construct(FbPixel $model)
-{
-    $this->model = $model;
-}
+    {
+        $this->model = $model;
+    }
+
+    public function index($show, $sort, $search)
+    {
+
+
+        $query  = $this->model->query();
+
+
+        foreach ($sort as $key => $value) {
+            $decode_data = json_decode($value);
+            $query->orderBy($decode_data->field, $decode_data->type);
+        }
+
+        return $query->paginate($show);
+    }
 
 
     public function findById($id)
     {
         try {
             $data = $this->model->findOrFail($id);
+
+            info($data);
             return $data;
         } catch (\Throwable $th) {
 
@@ -73,7 +90,7 @@ class FbPixelRepository
         }
 
         try {
-            $data->delete();
+            // $data->delete();
         } catch (\Throwable $th) {
 
             throw new DeleteResourceFailedException('Delete Failed');

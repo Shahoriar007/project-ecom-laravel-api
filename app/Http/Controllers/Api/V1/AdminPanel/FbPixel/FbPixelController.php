@@ -18,6 +18,16 @@ class FbPixelController extends Controller
         $this->repository = $repository;
     }
 
+    public function index(Request $request)
+    {
+        $show = $request->input('show', 10);
+        $sort = $request->input('sort', []);
+        $search = $request->input('q');
+
+        $data = $this->repository->index($show, $sort, $search);
+        return $this->response->paginator($data, new FbPixelTransformer());
+    }
+
     public function store(StoreFbPixelRequest $request)
     {
         $validated = $request->validated();

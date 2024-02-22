@@ -17,7 +17,7 @@ class FbPixelTransformer extends TransformerAbstract
         return [
             'id' => $category->id,
             'pixel_code' => $category->pixel_code,
-            'created_at' =>  $category->created_at,
+            'created_at' =>  $category->created_at ? $category->created_at->toFormattedDateString() : null,
             'created_by' => $category->created_by,
             'updated_by' => $category->updated_by,
 
