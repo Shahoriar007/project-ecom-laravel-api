@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\AdminPanel\Category;
+namespace App\Http\Requests\AdminPanel\FbPixel;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCategoryRequest extends FormRequest
+class StoreFbPixelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,7 @@ class StoreCategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            //
-            'name' => 'required|string|max:255|unique:categories,name',
-            'status' => 'nullable|boolean',
-            'description' => 'required|string',
-            'parent_name' => 'required|string',
-            'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
+            'pixel_code' => 'required|unique:fb_pixels,pixel_code',
         ];
     }
 }

@@ -240,4 +240,17 @@ class ProductRepository
             throw new DeleteResourceFailedException('Product Delete Failed');
         }
     }
+
+    public function showWithSlug($slug)
+    {
+        try {
+            $data = $this->model->where('slug', $slug)->first();
+            if ($data->hasMedia('large_pictures')) {
+                $data['large_pictures_url'] = $data->getFirstMediaUrl('large_pictures');
+            }
+            return $data;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
 }
