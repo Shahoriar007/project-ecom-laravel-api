@@ -27,6 +27,7 @@ class UpdateCategoryRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'status' => 'required|boolean',
+            'is_featured' => 'nullable|boolean',
             'description' => 'required|string',
             'image' => 'required_if:image_exists,false|image|mimes:png,jpg,jpeg|max:2048',
             'image_exists' => 'boolean'

@@ -36,6 +36,9 @@ class CreateProductsTable extends Migration
             $table->boolean('rated')->default(false);
             $table->date('until')->nullable();
             $table->boolean('status')->default(true);
+            $table->unsignedBigInteger('category_id')->comment('from categories table');
+            $table->unsignedBigInteger('sub_category_id')->comment('from sub categories table');
+            $table->unsignedBigInteger('child_category_id')->comment('from child categories table');
             $table->unsignedBigInteger('created_by')->nullable()->comment('from users table');
             $table->unsignedBigInteger('updated_by')->nullable()->comment('from users table');
             $table->timestamps();

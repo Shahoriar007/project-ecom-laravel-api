@@ -38,7 +38,7 @@ class ChildCategoryRepository
     {
 
 
-        $query  = $this->model->query();
+        $query  = $this->model->query()->with(['subCategory']);
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
