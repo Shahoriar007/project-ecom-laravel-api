@@ -41,7 +41,7 @@ class ChildCategory extends Model implements HasMedia
         });
     }
 
-    public function category(): BelongsTo
+    public function subCategory(): BelongsTo
     {
         return $this->belongsTo(SubCategory::class, 'sub_category_id', 'id');
     }

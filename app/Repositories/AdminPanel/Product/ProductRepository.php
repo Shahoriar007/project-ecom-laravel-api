@@ -93,6 +93,9 @@ class ProductRepository
                         'sku' => $validated['sku'],
                         'stock' => $validated['stock'],
                         'short_description' => $validated['short_description'],
+                        'category_id' => $validated['category_id'],
+                        'sub_category_id' => $validated['sub_category_id'],
+                        'child_category_id' => $validated['child_category_id'],
                         'offer_notice' => $validated['offer_notice'],
                         'status' => to_boolean($validated['status']),
                         'sale_price' => $validated['sale_price'],
@@ -104,13 +107,13 @@ class ProductRepository
                     ]
                 );
 
-                $categoryIds = [];
-                foreach ($validated['category_id'] as $id) {
-                    $categoryIds[] = $id;
-                }
+                // $categoryIds = [];
+                // foreach ($validated['category_id'] as $id) {
+                //     $categoryIds[] = $id;
+                // }
 
 
-                $model->categories()->attach($categoryIds);
+                // $model->categories()->attach($categoryIds);
 
                 foreach ($validated['labels'] as $name) {
                     $label =  $this->labelModel->updateOrCreate(
@@ -188,6 +191,9 @@ class ProductRepository
                     'sale_price' => $validated['sale_price'],
                     'stock' => $validated['stock'],
                     'sku' => $validated['sku'],
+                    'category_id' => $validated['category_id'],
+                    'sub_category_id' => $validated['sub_category_id'],
+                    'child_category_id' => $validated['child_category_id'],
                     'is_hot' => to_boolean($validated['is_hot']),
                     'is_sale' => to_boolean($validated['is_sale']),
                     'is_new' => to_boolean($validated['is_new']),
@@ -196,11 +202,11 @@ class ProductRepository
                 ]);
 
 
-                $categoryIds = [];
-                foreach ($validated['category_id'] as $id) {
-                    $categoryIds[] = $id;
-                }
-                $model->categories()->sync($categoryIds);
+                // $categoryIds = [];
+                // foreach ($validated['category_id'] as $id) {
+                //     $categoryIds[] = $id;
+                // }
+                // $model->categories()->sync($categoryIds);
 
                 $labelIds = [];
                 foreach ($validated['labels'] as $name) {

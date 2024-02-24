@@ -19,6 +19,7 @@ class CategoryTransformer extends TransformerAbstract
             'name' => $category->name,
             'slug' => $category->slug,
             'status' => (bool)$category->status,
+            'is_featured' => (bool)$category->is_featured,
             'description' => $category->description,
             'parent_name' => $category->parent_name,
             'disabled' => (bool)$category->disabled,

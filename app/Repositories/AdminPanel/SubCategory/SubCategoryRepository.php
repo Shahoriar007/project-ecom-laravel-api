@@ -41,7 +41,7 @@ class SubCategoryRepository
     {
 
 
-        $query  = $this->model->query();
+        $query  = $this->model->query()->with(['category']);
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
