@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\AdminPanel\Category;
+namespace App\Http\Requests\AdminPanel\ChildCategory;
 
-use Illuminate\Validation\Rule;
+
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCategoryRequest extends FormRequest
+class UpdateChildCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,6 +29,8 @@ class UpdateCategoryRequest extends FormRequest
             'status' => 'required|boolean',
             'description' => 'required|string',
             'image' => 'required_if:image_exists,false|image|mimes:png,jpg,jpeg|max:2048',
+            'is_featured' => 'required|boolean',
+            'sub_category_id' => 'required|exists:sub_categories,id',
             'image_exists' => 'boolean'
         ];
     }

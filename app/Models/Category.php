@@ -9,6 +9,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model implements HasMedia
 {
@@ -48,8 +49,13 @@ class Category extends Model implements HasMedia
     }
 
 
-    public function categories()
+    // public function categories()
+    // {
+    //     return $this->belongsToMany(Product::class, 'category_product');
+    // }
+
+    public function subCategories(): HasMany
     {
-        return $this->belongsToMany(Product::class, 'category_product');
+        return $this->hasMany(SubCategory::class, 'category_id', 'id');
     }
 }
