@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\AdminPanel\Category;
+namespace App\Http\Requests\AdminPanel\ChildCategory;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCategoryRequest extends FormRequest
+class StoreChildCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,11 @@ class StoreCategoryRequest extends FormRequest
     {
         return [
             //
-            'name' => 'required|string|max:255|unique:categories,name',
-            'status' => 'nullable|boolean',
+            'name' => 'required|string|max:255',
+            'status' => 'required|boolean',
             'description' => 'required|string',
+            'is_featured' => 'required|boolean',
+            'sub_category_id' => 'required|exists:sub_categories,id',
             'image' => 'required|image|mimes:png,jpg,jpeg|max:2048'
         ];
     }
