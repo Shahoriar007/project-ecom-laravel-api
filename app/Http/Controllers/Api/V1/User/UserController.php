@@ -12,7 +12,7 @@ use App\Transformers\UserTransformer;
 class UserController extends Controller
 {
 
-    private $repository;
+    private UserRepository $repository;
 
     public function __construct(UserRepository $repository)
     {

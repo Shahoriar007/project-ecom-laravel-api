@@ -16,14 +16,20 @@ class CreateOrdersTable extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
-            $table->integer('quantity');
-            $table->decimal('amount', 9, 2);
+
             $table->decimal('delivery_charge', 9, 2);
             $table->decimal('vat', 9, 2)->default(0);
             $table->decimal('tax', 9, 2)->default(0);
             $table->decimal('discount', 9, 2)->default(0);
-            $table->decimal('total_amount', 9, 2);
-            $table->string('delivery_address');
+            $table->decimal('total_price', 9, 2);
+
+            $table->string('company_name')->nullable();
+            $table->string('country_name')->nullable();
+            $table->string('city_name')->nullable();
+            $table->string('detail_address')->nullable();
+
+            $table->string('order_notes')->nullable();
+
             $table->enum('payment_method', ['cash_on_delivery', 'online_payment'])->default('cash_on_delivery');
             $table->enum('status', ['pending', 'processing', 'packing', 'shipping', 'on_the_way', 'in_review', 'rejected', 'returned', 'canceled', 'delivered'])->default('pending');
             $table->timestamps();

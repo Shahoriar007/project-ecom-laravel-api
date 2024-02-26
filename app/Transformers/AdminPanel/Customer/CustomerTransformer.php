@@ -13,11 +13,13 @@ class CustomerTransformer extends TransformerAbstract
     {
         return [
             'id' => $customer->id,
-            'name' => $customer->name,
-            'phone' => $customer->phone,
-            'status' => $customer->status,
+            'first_name' => $customer->first_name,
+            'last_name' => $customer->last_name,
             'email' => $customer->email,
-            'created_at' =>  $customer->created_at,
+            'phone' => $customer->phone,
+            'company_name' => $customer->company_name,
+            'is_band' => $customer->is_band,
+            'created_at' => $customer->created_at,
 
         ];
     }
