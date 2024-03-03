@@ -46,6 +46,13 @@ class CategoryController extends Controller
 
         return $this->response->collection($data, new CategoryTransformer());
     }
+
+    public function featuredAll()
+    {
+        $data = $this->repository->featuredAll();
+
+        return $this->response->collection($data, new CategoryTransformer());
+    }
     /**
      * Show the form for creating a new resource.
      *
