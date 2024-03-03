@@ -28,7 +28,10 @@ class CategoryRepository
     public function all()
     {
         try {
-            return $this->model->all();
+            $query = $this->model->all();
+
+            return $query;
+
         } catch (\Throwable $th) {
 
             throw new NotFoundHttpException('Not Found');
@@ -55,7 +58,18 @@ class CategoryRepository
 
     public function activeAll()
     {
-        return $this->model->where('status', true)->get();
+        $query = $this->model->where('status', true)->get();
+        $query->load('subCategories');
+        $query->load('subCategories.childCategories');
+
+        return $query;
+    }
+
+    public function featuredAll()
+    {
+        $query = $this->model->where('is_featured', true)->get();
+
+        return $query;
     }
 
     public function findById($id)

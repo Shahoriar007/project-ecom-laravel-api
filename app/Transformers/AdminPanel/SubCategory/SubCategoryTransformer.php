@@ -27,6 +27,7 @@ class SubCategoryTransformer extends TransformerAbstract
             'created_at' =>  $subCategory->created_at,
             'created_by' => $subCategory->created_by,
             'updated_by' => $subCategory->updated_by,
+            'child_categories' => $subCategory->childCategories,
 
         ];
     }

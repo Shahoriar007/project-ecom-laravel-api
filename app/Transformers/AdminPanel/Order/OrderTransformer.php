@@ -13,17 +13,15 @@ class OrderTransformer extends TransformerAbstract
     {
         return [
             'id' => $order->id,
-            'quantity' => $order->quantity,
             'delivery_charge' => $order->delivery_charge,
-            'vat' => $order->vat,
-            'tax' => $order->delivery_charge,
-            'discount' => $order->discount,
-            'total_amount' => $order->total_amount,
-            'delivery_address' => $order->delivery_address,
+            'total_price' => $order->total_price,
+            'company_name' => $order->company_name,
+            'country_name' => $order->country_name,
+            'city_name' => $order->city_name,
+            'detail_address' => $order->detail_address,
+            'order_notes' => $order->order_notes,
             'payment_method' => $order->payment_method,
             'status' => $order->status,
-            'customer_id' => $order->customer_id,
-            'created_at' =>  $order->created_at,
 
         ];
     }
