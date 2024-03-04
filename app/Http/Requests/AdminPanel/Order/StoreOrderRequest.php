@@ -24,13 +24,14 @@ class StoreOrderRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstName' => 'required|string|max:255',
-            'lastName' => 'required|string|max:255',
-            'email' => 'required|email',
+            'fullName' => 'required|string|max:255',
+            'firstName' => 'nullable|string|max:255',
+            'lastName' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
             'phone' => 'required|string|max:255',
             'companyName' => 'nullable|string|max:255',
-            'countryName' => 'required|string|max:255',
-            'cityName' => 'required|string|max:255',
+            'countryName' => 'nullable|string|max:255',
+            'cityName' => 'nullable|string|max:255',
             'detailAddress' => 'required|string|max:255',
             'orderNotes' => 'nullable|string',
             'paymentMethod' => 'nullable|string|max:255',

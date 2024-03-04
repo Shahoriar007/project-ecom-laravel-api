@@ -259,4 +259,9 @@ class ProductRepository
             throw new NotFoundHttpException('Not Found');
         }
     }
+
+    public function totalProducts()
+    {
+        return $this->model->count();
+    }
 }

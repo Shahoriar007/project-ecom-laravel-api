@@ -7,7 +7,10 @@ $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function ($api) {
 
     $api->get('active-products', [ProductController::class, 'activeAll']);
+    
+    $api->get('total-products', [ProductController::class, 'totalProducts']);
     $api->get('products/{slug}', [ProductController::class, 'showWithSlug']);
+
     $api->group(['middleware' => 'jwt.auth'], function ($api) {
         $api->resource('products', ProductController::class);
     });

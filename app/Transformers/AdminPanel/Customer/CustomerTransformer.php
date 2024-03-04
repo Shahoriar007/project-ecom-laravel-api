@@ -13,6 +13,7 @@ class CustomerTransformer extends TransformerAbstract
     {
         return [
             'id' => $customer->id,
+            'full_name' => $customer->full_name ,
             'first_name' => $customer->first_name,
             'last_name' => $customer->last_name,
             'email' => $customer->email,
