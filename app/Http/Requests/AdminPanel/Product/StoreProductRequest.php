@@ -43,6 +43,7 @@ class StoreProductRequest extends FormRequest
             'large_pictures*' => 'required|image|mimes:png,jpg,jpeg|max:2048',
             'labels' => 'required|array',
             'labels*' => 'required|string',
+            'video_link' => 'nullable|string|max:800',
 
         ];
     }

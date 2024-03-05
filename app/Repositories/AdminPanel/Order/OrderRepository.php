@@ -32,6 +32,7 @@ class OrderRepository
                 // save customer data to customer table
                 if ($customer) {
                     $customer->update([
+                        'full_name' => $validated['fullName'],
                         'first_name' => $validated['firstName'],
                         'last_name' => $validated['lastName'],
                         'email' => $validated['email'],
@@ -40,6 +41,7 @@ class OrderRepository
                     ]);
                 } else{
                     $customer = $this->customerModel->create([
+                        'full_name' => $validated['fullName'],
                         'first_name' => $validated['firstName'],
                         'last_name' => $validated['lastName'],
                         'email' => $validated['email'],
@@ -83,6 +85,7 @@ class OrderRepository
                 info($th);
                 throw new NotFoundHttpException('Not Found');
             }
+
             return "Order Created";
         });
     }

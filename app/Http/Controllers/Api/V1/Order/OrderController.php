@@ -19,10 +19,9 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request)
     {
-        info("im in controller");
         $validated = $request->validated();
         $data = $this->repository->store($validated);
-        info($data);
+        return $data;
 
     }
 

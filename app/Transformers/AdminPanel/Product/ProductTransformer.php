@@ -47,6 +47,7 @@ class ProductTransformer extends TransformerAbstract
             'category_id' => $product->category_id,
             'sub_category_id' => $product->sub_category_id,
             'child_category_id' => $product->child_category_id,
+            'video_link' => $product->video_link,
 
             'created_by' => $product->created_by,
             'updated_by' => $product->updated_by,

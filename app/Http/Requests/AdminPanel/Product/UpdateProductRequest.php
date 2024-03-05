@@ -45,7 +45,8 @@ class UpdateProductRequest extends FormRequest
             'labels' => 'required|array',
             'labels*' => 'required|string',
             'image_exists' => 'boolean',
-            'remove_all_image' => 'boolean'
+            'remove_all_image' => 'boolean',
+            'video_link' => 'nullable|string|max:800',
         ];
     }
 

@@ -113,7 +113,6 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
         $this->repository->delete($id);
         return $this->response()->noContent();
     }
@@ -122,5 +121,11 @@ class ProductController extends Controller
     {
         $data = $this->repository->showWithSlug($slug);
         return $this->response->item($data, new ProductTransformer());
+    }
+
+    public function totalProducts()
+    {
+        $data = $this->repository->totalProducts();
+        return $this->response->array(['total_products' => $data]);
     }
 }
