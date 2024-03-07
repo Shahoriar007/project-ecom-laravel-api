@@ -72,6 +72,6 @@ class Product extends Model implements HasMedia
 
     public function orders()
     {
-        return $this->belongsToMany(Order::class, 'order_product', 'order_id', 'product_id');
+        return $this->belongsToMany(Order::class, 'order_product', 'order_id', 'product_id')->withPivot('quantity');
     }
 }
