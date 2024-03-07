@@ -100,12 +100,20 @@ class OrderRepository
         }
     }
 
-    public function index($show, $sort, $search)
+    public function index($show, $sort, $search, $filterStatus, $customerId)
     {
         $query  = $this->model->query();
 
+        if (!empty($customerId)) {
+            $query->where('customer_id', $customerId);
+        }
+
         if (!empty($search)) {
             $query->where('company_name', 'LIKE', "%$search%");
+        }
+
+        if (!empty($filterStatus)) {
+            $query->where('status', $filterStatus);
         }
 
         // foreach ($sort as $key => $value) {
@@ -114,5 +122,30 @@ class OrderRepository
         // }
 
         return $query->paginate($show);
+    }
+
+    public function details($id)
+    {
+        try {
+            $query = $this->model->findOrFail($id);
+            return $query;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function updateOrderStatus($request)
+    {
+        try {
+            $order = $this->model->findOrFail($request->id);
+
+            info($order);
+            $order->update([
+                'status' => $request->status
+            ]);
+            return "Order Status Updated";
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
     }
 }
