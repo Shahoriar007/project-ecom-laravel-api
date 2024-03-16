@@ -3,8 +3,9 @@
 
 namespace App\Repositories\AdminPanel\Order;
 
-use App\Models\Customer;
 use App\Models\Order;
+use App\Models\Customer;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -81,12 +82,15 @@ class OrderRepository
                 $order->products()->sync($orderProducts);
 
 
+
             } catch (\Throwable $th) {
                 info($th);
                 throw new NotFoundHttpException('Not Found');
+                return (500);
+
             }
 
-            return "Order Created";
+           return (200);
         });
     }
 
@@ -100,7 +104,7 @@ class OrderRepository
         }
     }
 
-    public function index($show, $sort, $search, $filterStatus, $customerId)
+    public function index($show, $sort, $search, $filterStatus, $customerId, $rangeDate)
     {
         $query  = $this->model->query();
 
@@ -109,10 +113,27 @@ class OrderRepository
         }
 
         if (!empty($search)) {
-            $query->where('company_name', 'LIKE', "%$search%");
+            $query->where('detail_address', 'LIKE', "%$search%");
         }
 
-        if (!empty($filterStatus)) {
+        if (!empty($rangeDate)) {
+            info($rangeDate);
+
+            if (strpos($rangeDate, ' to ') !== false) {
+                // $rangeDate is a range like "2024-03-04 to 2024-03-06"
+                $date = explode(' to ', $rangeDate);
+                // Add one day to the end date
+                $endDate = date('Y-m-d', strtotime($date[1] . ' +1 day'));
+                $query->whereBetween('created_at', [$date[0], $endDate]);
+            } else {
+                // $rangeDate is a single date like "2024-03-04"
+                $query->whereDate('created_at', $rangeDate);
+            }
+        }
+
+        if (!empty($filterStatus) && $filterStatus == 'all') {
+            $query->where('status', '!=', 'deleted');
+        }elseif (!empty($filterStatus)) {
             $query->where('status', $filterStatus);
         }
 
@@ -147,5 +168,19 @@ class OrderRepository
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Not Found');
         }
+    }
+
+    public function printInvoice()
+    {
+        $pdf = Pdf::setOption([
+            'dpi' => 150,
+            'isPhpEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isFontSubsettingEnabled' => true,
+            // 'defaultMediaType' => 'print',
+            'defaultFont' => 'Open Sans'
+        ])->loadView('pdf.invoice');
+
+        return $pdf->download('invoice.pdf');
     }
 }

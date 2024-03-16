@@ -21,6 +21,8 @@ class OrderController extends Controller
     {
         $validated = $request->validated();
         $data = $this->repository->store($validated);
+
+        info($data);
         return $data;
 
     }
@@ -32,8 +34,9 @@ class OrderController extends Controller
         $search = $request->input('q');
         $filterStatus = $request->input('filterStatus');
         $customerId = $request->input('customerId');
+        $rangeDate = $request->input('rangeDate');
 
-        $data = $this->repository->index($show, $sort, $search, $filterStatus, $customerId);
+        $data = $this->repository->index($show, $sort, $search, $filterStatus, $customerId, $rangeDate);
 
         return $this->response->paginator($data, new OrderTransformer());
     }
@@ -48,5 +51,10 @@ class OrderController extends Controller
     {
         return $this->repository->updateOrderStatus($request);
         info($request);
+    }
+
+    public function printInvoice()
+    {
+        return $this->repository->printInvoice();
     }
 }
