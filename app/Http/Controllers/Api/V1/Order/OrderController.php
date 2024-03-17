@@ -22,7 +22,6 @@ class OrderController extends Controller
         $validated = $request->validated();
         $data = $this->repository->store($validated);
 
-        info($data);
         return $data;
 
     }
@@ -56,5 +55,17 @@ class OrderController extends Controller
     public function printInvoice()
     {
         return $this->repository->printInvoice();
+    }
+
+    public function printSticker(Request $request)
+    {
+        $orderIds = $request->orderIds;
+        return $this->repository->printSticker($orderIds);
+    }
+
+    public function statusChangeMultiple(Request $request)
+    {
+        $this->repository->statusChangeMultiple($request->ids, $request->status);
+        return $this->response()->noContent();
     }
 }

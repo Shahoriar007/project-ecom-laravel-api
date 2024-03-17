@@ -40,7 +40,7 @@ class OrderRepository
                         'phone' => $validated['phone'],
                         'company_name' => $validated['companyName'],
                     ]);
-                } else{
+                } else {
                     $customer = $this->customerModel->create([
                         'full_name' => $validated['fullName'],
                         'first_name' => $validated['firstName'],
@@ -80,17 +80,13 @@ class OrderRepository
                 })->toArray();
 
                 $order->products()->sync($orderProducts);
-
-
-
             } catch (\Throwable $th) {
                 info($th);
                 throw new NotFoundHttpException('Not Found');
                 return (500);
-
             }
 
-           return (200);
+            return (200);
         });
     }
 
@@ -107,13 +103,17 @@ class OrderRepository
     public function index($show, $sort, $search, $filterStatus, $customerId, $rangeDate)
     {
         $query  = $this->model->query();
+        $query->orderBy('id', 'desc');
 
         if (!empty($customerId)) {
             $query->where('customer_id', $customerId);
         }
 
         if (!empty($search)) {
-            $query->where('detail_address', 'LIKE', "%$search%");
+            $query->where('detail_address', 'LIKE', "%$search%")
+                ->orWhereHas('customer', function ($query) use ($search) {
+                    $query->where('full_name', 'LIKE', "%$search%");
+                });
         }
 
         if (!empty($rangeDate)) {
@@ -133,7 +133,7 @@ class OrderRepository
 
         if (!empty($filterStatus) && $filterStatus == 'all') {
             $query->where('status', '!=', 'deleted');
-        }elseif (!empty($filterStatus)) {
+        } elseif (!empty($filterStatus)) {
             $query->where('status', $filterStatus);
         }
 
@@ -182,5 +182,49 @@ class OrderRepository
         ])->loadView('pdf.invoice');
 
         return $pdf->download('invoice.pdf');
+    }
+
+    public function printSticker($orderIds)
+    {
+        try {
+            $orders = $this->model->whereIn('id', $orderIds)->get();
+
+            $htmlContent = '';
+
+            foreach ($orders as $order) {
+                // Render the 'pdf.sticker' view with the order data and get the HTML content
+                $view = view('pdf.sticker', ['order' => $order]);
+                $htmlContent .= $view->render();
+            }
+
+            // Create a new PDF with the combined HTML content
+            $pdf = Pdf::setOption([
+                'dpi' => 150,
+                'isPhpEnabled' => true,
+                'isHtml5ParserEnabled' => true,
+                'isFontSubsettingEnabled' => true,
+                'defaultFont' => 'Open Sans'
+            ])->loadHTML($htmlContent);
+
+            return $pdf->download('stickers.pdf');
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function statusChangeMultiple($ids, $status)
+    {
+        try {
+            $orders = $this->model->whereIn('id', $ids)->get();
+
+            foreach ($orders as $order) {
+                $order->update([
+                    'status' => $status
+                ]);
+            }
+            return "Order Status Updated";
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
     }
 }
