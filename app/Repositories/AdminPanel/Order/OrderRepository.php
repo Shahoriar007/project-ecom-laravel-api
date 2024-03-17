@@ -227,4 +227,32 @@ class OrderRepository
             throw new NotFoundHttpException('Not Found');
         }
     }
+
+    public function totalOrderAmount($id)
+    {
+        try {
+            $totalOrderAmount = $this->model->where('customer_id', $id)->sum('total_price');
+            $totalPendingCount = $this->model->where('customer_id', $id)->where('status', 'pending')->count();
+            $totalProcessingCount = $this->model->where('customer_id', $id)
+            ->where('status', 'processing')
+            ->where('status', 'packing')
+            ->where('status', 'shipping')
+            ->where('status', 'on_the_way')
+            ->where('status', 'in_review')
+            ->count();
+            $totalCancelledCount = $this->model->where('customer_id', $id)->where('status', 'canceled')->count();
+            $totalDeliveredCount = $this->model->where('customer_id', $id)->where('status', 'delivered')->count();
+            $totalReturnedCount = $this->model->where('customer_id', $id)->where('status', 'returned')->count();
+            return [
+                'totalOrderAmount' => $totalOrderAmount,
+                'totalPendingCount' => $totalPendingCount,
+                'totalProcessingCount' => $totalProcessingCount,
+                'totalCancelledCount' => $totalCancelledCount,
+                'totalDeliveredCount' => $totalDeliveredCount,
+                'totalReturnedCount' => $totalReturnedCount,
+            ];
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
 }

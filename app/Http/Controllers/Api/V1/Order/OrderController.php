@@ -19,6 +19,7 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request)
     {
+
         $validated = $request->validated();
         $data = $this->repository->store($validated);
 
@@ -49,7 +50,6 @@ class OrderController extends Controller
     public function updateOrderStatus(Request $request)
     {
         return $this->repository->updateOrderStatus($request);
-        info($request);
     }
 
     public function printInvoice()
@@ -67,5 +67,11 @@ class OrderController extends Controller
     {
         $this->repository->statusChangeMultiple($request->ids, $request->status);
         return $this->response()->noContent();
+    }
+
+    public function totalOrderAmount($id)
+    {
+        $data = $this->repository->totalOrderAmount($id);
+        return response()->json($data);
     }
 }
