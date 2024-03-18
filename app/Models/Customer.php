@@ -16,6 +16,7 @@ class Customer extends Model
         'phone',
         'company_name',
         'is_band',
+        'full_name',
     ];
 
     public function orders()

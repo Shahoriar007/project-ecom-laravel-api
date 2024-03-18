@@ -3,9 +3,15 @@
 
 namespace App\Repositories\AdminPanel\Order;
 
-use App\Models\Customer;
+use App\Models\User;
 use App\Models\Order;
+use App\Models\Customer;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Models\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewOrderNotification;
+use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderRepository
@@ -13,17 +19,22 @@ class OrderRepository
 
     private Order $model;
     private Customer $customerModel;
+    private User $user;
+    private DatabaseNotification $notificationModel;
 
-    public function __construct(Order $model, Customer $customerModel)
+
+    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel)
     {
         $this->model = $model;
         $this->customerModel = $customerModel;
+        $this->user = $user;
+        $this->notificationModel = $notificationModel;
     }
 
     public function store($validated)
     {
 
-        return  DB::transaction(function () use ($validated) {
+        // return  DB::transaction(function () use ($validated) {
 
             try {
                 //check from customer table if customer exists with phone or email
@@ -39,7 +50,7 @@ class OrderRepository
                         'phone' => $validated['phone'],
                         'company_name' => $validated['companyName'],
                     ]);
-                } else{
+                } else {
                     $customer = $this->customerModel->create([
                         'full_name' => $validated['fullName'],
                         'first_name' => $validated['firstName'],
@@ -80,14 +91,23 @@ class OrderRepository
 
                 $order->products()->sync($orderProducts);
 
+                // send notification to customer
+                $users = $this->user->all();
+                $this->sendNotification($users, $order);
 
             } catch (\Throwable $th) {
                 info($th);
                 throw new NotFoundHttpException('Not Found');
+                return (500);
             }
 
-            return "Order Created";
-        });
+            return (200);
+        // });
+    }
+
+    public function sendNotification($notifiableUsers, $order)
+    {
+        Notification::send($notifiableUsers, new NewOrderNotification($order));
     }
 
     public function all()
@@ -100,19 +120,40 @@ class OrderRepository
         }
     }
 
-    public function index($show, $sort, $search, $filterStatus, $customerId)
+    public function index($show, $sort, $search, $filterStatus, $customerId, $rangeDate)
     {
         $query  = $this->model->query();
+        $query->orderBy('id', 'desc');
 
         if (!empty($customerId)) {
             $query->where('customer_id', $customerId);
         }
 
         if (!empty($search)) {
-            $query->where('company_name', 'LIKE', "%$search%");
+            $query->where('detail_address', 'LIKE', "%$search%")
+                ->orWhereHas('customer', function ($query) use ($search) {
+                    $query->where('full_name', 'LIKE', "%$search%");
+                });
         }
 
-        if (!empty($filterStatus)) {
+        if (!empty($rangeDate)) {
+            info($rangeDate);
+
+            if (strpos($rangeDate, ' to ') !== false) {
+                // $rangeDate is a range like "2024-03-04 to 2024-03-06"
+                $date = explode(' to ', $rangeDate);
+                // Add one day to the end date
+                $endDate = date('Y-m-d', strtotime($date[1] . ' +1 day'));
+                $query->whereBetween('created_at', [$date[0], $endDate]);
+            } else {
+                // $rangeDate is a single date like "2024-03-04"
+                $query->whereDate('created_at', $rangeDate);
+            }
+        }
+
+        if (!empty($filterStatus) && $filterStatus == 'all') {
+            $query->where('status', '!=', 'deleted');
+        } elseif (!empty($filterStatus)) {
             $query->where('status', $filterStatus);
         }
 
@@ -146,6 +187,118 @@ class OrderRepository
             return "Order Status Updated";
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function printInvoice()
+    {
+        $pdf = Pdf::setOption([
+            'dpi' => 150,
+            'isPhpEnabled' => true,
+            'isHtml5ParserEnabled' => true,
+            'isFontSubsettingEnabled' => true,
+            // 'defaultMediaType' => 'print',
+            'defaultFont' => 'Open Sans'
+        ])->loadView('pdf.invoice');
+
+        return $pdf->download('invoice.pdf');
+    }
+
+    public function printSticker($orderIds)
+    {
+        try {
+            $orders = $this->model->whereIn('id', $orderIds)->get();
+
+            $htmlContent = '';
+
+            foreach ($orders as $order) {
+                // Render the 'pdf.sticker' view with the order data and get the HTML content
+                $view = view('pdf.sticker', ['order' => $order]);
+                $htmlContent .= $view->render();
+            }
+
+            // Create a new PDF with the combined HTML content
+            $pdf = Pdf::setOption([
+                'dpi' => 150,
+                'isPhpEnabled' => true,
+                'isHtml5ParserEnabled' => true,
+                'isFontSubsettingEnabled' => true,
+                'defaultFont' => 'Open Sans'
+            ])->loadHTML($htmlContent);
+
+            return $pdf->download('stickers.pdf');
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function statusChangeMultiple($ids, $status)
+    {
+        try {
+            $orders = $this->model->whereIn('id', $ids)->get();
+
+            foreach ($orders as $order) {
+                $order->update([
+                    'status' => $status
+                ]);
+            }
+            return "Order Status Updated";
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function totalOrderAmount($id)
+    {
+        try {
+            $totalOrderAmount = $this->model->where('customer_id', $id)->sum('total_price');
+            $totalPendingCount = $this->model->where('customer_id', $id)->where('status', 'pending')->count();
+            $totalProcessingCount = $this->model->where('customer_id', $id)
+            ->where('status', 'processing')
+            ->where('status', 'packing')
+            ->where('status', 'shipping')
+            ->where('status', 'on_the_way')
+            ->where('status', 'in_review')
+            ->count();
+            $totalCancelledCount = $this->model->where('customer_id', $id)->where('status', 'canceled')->count();
+            $totalDeliveredCount = $this->model->where('customer_id', $id)->where('status', 'delivered')->count();
+            $totalReturnedCount = $this->model->where('customer_id', $id)->where('status', 'returned')->count();
+            return [
+                'totalOrderAmount' => $totalOrderAmount,
+                'totalPendingCount' => $totalPendingCount,
+                'totalProcessingCount' => $totalProcessingCount,
+                'totalCancelledCount' => $totalCancelledCount,
+                'totalDeliveredCount' => $totalDeliveredCount,
+                'totalReturnedCount' => $totalReturnedCount,
+            ];
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function getUserUnreadNotifications()
+    {
+        try {
+            $user = $this->user->findOrFail(Auth::user()->id);
+            return $user->unreadNotifications;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Unread Notifications Not Found');
+        }
+    }
+
+    public function markAsRead($id)
+    {
+        try {
+            $notification = $this->notificationModel->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Notification Not Found');
+        }
+
+        try {
+            $notification->markAsRead();
+            return $notification;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Notification Read Failed');
         }
     }
 }

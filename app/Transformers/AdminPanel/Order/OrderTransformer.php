@@ -22,6 +22,8 @@ class OrderTransformer extends TransformerAbstract
             'order_notes' => $order->order_notes,
             'payment_method' => $order->payment_method,
             'status' => $order->status,
+            'created_at' => $order->created_at,
+            'updated_at' => $order->updated_at,
             'customer' => $order->customer,
             'products' => $this->transformProducts($order->products),
 

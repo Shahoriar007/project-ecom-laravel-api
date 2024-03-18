@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shipping Label</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 5in; /* Adjust width to 4 inches */
+        height: 4in; /* Adjust height to 3 inches */
+        border: 1px solid #000;
+        padding: 0.1in; /* Adjust padding as needed */
+    }
+    .row {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+    .column {
+        display: table-cell;
+        border-right: 1px solid #000;
+        padding: 0.05in; /* Adjust padding as needed */
+        text-align: center;
+        vertical-align: middle;
+        word-wrap: break-word;
+    }
+    .logo img {
+        max-width: 100%;
+        max-height: 0.8in; /* Adjust max-height for logo */
+    }
+    .barcode img,
+    .qrcode img {
+        max-width: 1.2in; /* Adjust max-width of barcode and QR code */
+        height: auto;
+    }
+    .second-row {
+        border-top: 1px solid #000;
+        border-bottom: 1px solid #000;
+    }
+    .single-column {
+        padding: 0.05in; /* Adjust padding as needed */
+        text-align: center;
+    }
+    .third-row,
+    .fourth-row {
+        border-top: 1px solid #000;
+    }
+    .barcode-column {
+        width: 1.5in; /* Adjust width for barcode column */
+        border-right: 1px solid #000;
+        padding: 0.05in; /* Adjust padding as needed */
+    }
+    .qrcode-column {
+        width: 0.5in; /* Adjust width for QR code column */
+        padding: 0.05in; /* Adjust padding as needed */
+    }
+    .three-columns {
+        width: 2.5in; /* Adjust width of three columns */
+        display: table-cell;
+        vertical-align: top;
+    }
+    .three-columns .single-column {
+        border-bottom: 1px solid #000;
+        padding: 0.05in; /* Adjust padding as needed */
+        text-align: center;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="column logo">
+                <img style="max-width: 50%;" src="http://127.0.0.1:5500/public/images/logo.jpeg" alt="Logo">
+            </div>
+            <div class="column order-details">
+                <div>Order ID</div>
+            </div>
+            <div class="column barcode">
+                <div>Date: [Date]</div>
+            </div>
+        </div>
+        <div class="row second-row">
+            <div class="single-column">
+                <img style="max-width: 50%;" src="http://127.0.0.1:5500/public/images/barcode.png" alt="Barcode">
+            </div>
+        </div>
+        <div class="row third-row">
+            <div class="column barcode-column">
+                <img style="max-width: 90%;" src="http://127.0.0.1:5500/public/images/barcode.png" alt="Barcode">
+            </div>
+            <div class="column three-columns">
+                <div class="single-column">Content 1</div>
+                <div class="single-column">Content 2</div>
+                <div class="single-column">Content 3</div>
+            </div>
+        </div>
+        <div class="row fourth-row">
+            <div class="column qrcode-column">
+                <img style="max-width: 90%;" src="http://127.0.0.1:5500/public/images/qr.png" alt="QRcode">
+            </div>
+            <div class="column three-columns">
+                <div class="single-column">Content 1</div>
+                <div class="single-column">Content 2</div>
+                <div class="single-column">Content 3</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
