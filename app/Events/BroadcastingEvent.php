@@ -32,7 +32,7 @@ class BroadcastingEvent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new Channel('naf-inventory');
+        return [config('app.pusher_channel')];
     }
 
     /**

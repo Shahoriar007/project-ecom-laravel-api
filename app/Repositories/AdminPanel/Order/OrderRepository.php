@@ -3,10 +3,15 @@
 
 namespace App\Repositories\AdminPanel\Order;
 
+use App\Models\User;
 use App\Models\Order;
 use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use App\Models\DatabaseNotification;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\NewOrderNotification;
+use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderRepository
@@ -14,17 +19,22 @@ class OrderRepository
 
     private Order $model;
     private Customer $customerModel;
+    private User $user;
+    private DatabaseNotification $notificationModel;
 
-    public function __construct(Order $model, Customer $customerModel)
+
+    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel)
     {
         $this->model = $model;
         $this->customerModel = $customerModel;
+        $this->user = $user;
+        $this->notificationModel = $notificationModel;
     }
 
     public function store($validated)
     {
 
-        return  DB::transaction(function () use ($validated) {
+        // return  DB::transaction(function () use ($validated) {
 
             try {
                 //check from customer table if customer exists with phone or email
@@ -80,6 +90,11 @@ class OrderRepository
                 })->toArray();
 
                 $order->products()->sync($orderProducts);
+
+                // send notification to customer
+                $users = $this->user->all();
+                $this->sendNotification($users, $order);
+
             } catch (\Throwable $th) {
                 info($th);
                 throw new NotFoundHttpException('Not Found');
@@ -87,7 +102,12 @@ class OrderRepository
             }
 
             return (200);
-        });
+        // });
+    }
+
+    public function sendNotification($notifiableUsers, $order)
+    {
+        Notification::send($notifiableUsers, new NewOrderNotification($order));
     }
 
     public function all()
@@ -253,6 +273,32 @@ class OrderRepository
             ];
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Not Found');
+        }
+    }
+
+    public function getUserUnreadNotifications()
+    {
+        try {
+            $user = $this->user->findOrFail(Auth::user()->id);
+            return $user->unreadNotifications;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Unread Notifications Not Found');
+        }
+    }
+
+    public function markAsRead($id)
+    {
+        try {
+            $notification = $this->notificationModel->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Notification Not Found');
+        }
+
+        try {
+            $notification->markAsRead();
+            return $notification;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Notification Read Failed');
         }
     }
 }

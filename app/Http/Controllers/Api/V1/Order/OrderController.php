@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Order;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Transformers\NotificationTransformer;
 use App\Repositories\AdminPanel\Order\OrderRepository;
 use App\Transformers\AdminPanel\Order\OrderTransformer;
 use App\Http\Requests\AdminPanel\Order\StoreOrderRequest;
@@ -73,5 +74,20 @@ class OrderController extends Controller
     {
         $data = $this->repository->totalOrderAmount($id);
         return response()->json($data);
+    }
+
+    // notification
+
+    public function getUserUnreadNotifications()
+    {
+        $unreadNotifications =  $this->repository->getUserUnreadNotifications();
+
+        return $this->response->collection($unreadNotifications, new NotificationTransformer());
+    }
+
+    public function markAsRead(Request $request)
+    {
+        $notification = $this->repository->markAsRead($request->id);
+        return $this->response->item($notification, new NotificationTransformer());
     }
 }

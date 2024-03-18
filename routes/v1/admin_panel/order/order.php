@@ -20,6 +20,11 @@ $api->version('v1', function ($api) {
         $api->get('print-invoice', [OrderController::class, 'printInvoice']);
         $api->match(['PUT', 'PATCH'], 'print-sticker', [OrderController::class, 'printSticker']);
 
+        //notification
+        $api->get('notifications/user/unread', [OrderController::class, 'getUserUnreadNotifications']);
+        $api->match(['PUT', 'PATCH'], 'notification/{id}/mark-as-read', [OrderController::class, 'markAsRead']);
+
+
     });
 
 
