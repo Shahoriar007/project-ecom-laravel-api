@@ -35,6 +35,25 @@ class CustomerRepository
 
     }
 
+    public function bandActive($id)
+    {
+        $data = $this->model->find($id);
+        if (!$data) {
+            throw new NotFoundHttpException('Data not found');
+        }
+
+        DB::beginTransaction();
+        try {
+            $data->is_band = !$data->is_band;
+            $data->save();
+            DB::commit();
+            return $data;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw new \Exception($e->getMessage());
+        }
+    }
+
 
 
 

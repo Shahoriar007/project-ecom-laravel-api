@@ -9,6 +9,7 @@ use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Models\DatabaseNotification;
+use App\Models\MasterSetting;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Notification;
@@ -21,22 +22,23 @@ class OrderRepository
     private Customer $customerModel;
     private User $user;
     private DatabaseNotification $notificationModel;
+    private MasterSetting $masterSetting;
 
 
-    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel)
+    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel, MasterSetting $masterSetting)
     {
         $this->model = $model;
         $this->customerModel = $customerModel;
         $this->user = $user;
         $this->notificationModel = $notificationModel;
+        $this->masterSetting = $masterSetting;
     }
+
 
     public function store($validated)
     {
-
-        // return  DB::transaction(function () use ($validated) {
-
-            try {
+        try {
+            return DB::transaction(function () use ($validated) {
                 //check from customer table if customer exists with phone or email
                 $customer = $this->customerModel->where('email', $validated['email'])->orWhere('phone', $validated['phone'])->first();
 
@@ -74,16 +76,10 @@ class OrderRepository
                     'city_name' => $validated['cityName'],
                     'detail_address' => $validated['detailAddress'],
                     'order_notes' => $validated['orderNotes'],
+                    'order_from' => $validated['orderFrom'],
                     // 'payment_method' => $validated['paymentMethod'],
                     // 'status' => $validated['status'],
                 ]);
-
-                // save order items to order_product table
-                // $orderProducts = $validated['products'];
-
-                // foreach ($orderProducts as $orderProduct) {
-                //     $order->products()->attach($orderProduct['id'], ['quantity' => $orderProduct['qty']]);
-                // }
 
                 $orderProducts = collect($validated['products'])->mapWithKeys(function ($product) {
                     return [$product['id'] => ['quantity' => $product['qty']]];
@@ -95,14 +91,13 @@ class OrderRepository
                 $users = $this->user->all();
                 $this->sendNotification($users, $order);
 
-            } catch (\Throwable $th) {
-                info($th);
-                throw new NotFoundHttpException('Not Found');
-                return (500);
-            }
-
-            return (200);
-        // });
+                return (200);
+            });
+        } catch (\Throwable $th) {
+            info($th);
+            throw new NotFoundHttpException('Not Found');
+            return (500);
+        }
     }
 
     public function sendNotification($notifiableUsers, $order)
@@ -131,6 +126,7 @@ class OrderRepository
 
         if (!empty($search)) {
             $query->where('detail_address', 'LIKE', "%$search%")
+                ->orWhere('id', 'LIKE', "%$search%")
                 ->orWhereHas('customer', function ($query) use ($search) {
                     $query->where('full_name', 'LIKE', "%$search%");
                 });
@@ -180,7 +176,6 @@ class OrderRepository
         try {
             $order = $this->model->findOrFail($request->id);
 
-            info($order);
             $order->update([
                 'status' => $request->status
             ]);
@@ -235,6 +230,7 @@ class OrderRepository
     public function statusChangeMultiple($ids, $status)
     {
         try {
+
             $orders = $this->model->whereIn('id', $ids)->get();
 
             foreach ($orders as $order) {
@@ -253,20 +249,26 @@ class OrderRepository
         try {
             $totalOrderAmount = $this->model->where('customer_id', $id)->sum('total_price');
             $totalPendingCount = $this->model->where('customer_id', $id)->where('status', 'pending')->count();
-            $totalProcessingCount = $this->model->where('customer_id', $id)
-            ->where('status', 'processing')
-            ->where('status', 'packing')
-            ->where('status', 'shipping')
-            ->where('status', 'on_the_way')
-            ->where('status', 'in_review')
-            ->count();
+            $totalPending1Count = $this->model->where('customer_id', $id)->where('status', 'pending-1')->count();
+            $totalPending2Count = $this->model->where('customer_id', $id)->where('status', 'pending-2')->count();
+            $totalProcessingCount = $this->model->where('customer_id', $id)->where('status', 'processing')->count();
+            $totalPackagingCount = $this->model->where('customer_id', $id)->where('status', 'packaging')->count();
+            $totalShippingCount = $this->model->where('customer_id', $id)->where('status', 'shipping')->count();
+            $totalOnTheWayCount = $this->model->where('customer_id', $id)->where('status', 'on_the_way')->count();
+            $totalInReviewCount = $this->model->where('customer_id', $id)->where('status', 'in_review')->count();
             $totalCancelledCount = $this->model->where('customer_id', $id)->where('status', 'canceled')->count();
             $totalDeliveredCount = $this->model->where('customer_id', $id)->where('status', 'delivered')->count();
             $totalReturnedCount = $this->model->where('customer_id', $id)->where('status', 'returned')->count();
             return [
                 'totalOrderAmount' => $totalOrderAmount,
                 'totalPendingCount' => $totalPendingCount,
+                'totalPending1Count' => $totalPending1Count,
+                'totalPending2Count' => $totalPending2Count,
                 'totalProcessingCount' => $totalProcessingCount,
+                'totalPackagingCount' => $totalPackagingCount,
+                'totalShippingCount' => $totalShippingCount,
+                'totalOnTheWayCount' => $totalOnTheWayCount,
+                'totalInReviewCount' => $totalInReviewCount,
                 'totalCancelledCount' => $totalCancelledCount,
                 'totalDeliveredCount' => $totalDeliveredCount,
                 'totalReturnedCount' => $totalReturnedCount,
@@ -299,6 +301,53 @@ class OrderRepository
             return $notification;
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Notification Read Failed');
+        }
+    }
+
+    public function getDeliveryCharge()
+    {
+        try {
+            $deliveryCharge = $this->masterSetting->get();
+            return $deliveryCharge;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Delivery Charge Not Found');
+        }
+    }
+
+    public function updateDeliveryCharge($request)
+    {
+        try {
+            $deliveryCharge = $this->masterSetting->first();
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Delivery Charge Not Found');
+        }
+
+        try {
+            $deliveryCharge->update([
+                'inside_dhaka' => $request->inside_dhaka,
+                'outside_dhaka' => $request->outside_dhaka,
+            ]);
+            return $deliveryCharge;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Delivery Charge Update Failed');
+        }
+    }
+
+    public function updateComment($request)
+    {
+        try {
+            $order = $this->model->findOrFail($request['id']);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Order Not Found');
+        }
+
+        try {
+            $order->update([
+                'comment' => $request->comment
+            ]);
+            return $order;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Comment Update Failed');
         }
     }
 }

@@ -44,6 +44,7 @@ class StoreOrderRequest extends FormRequest
             'tax' => 'nullable|numeric',
             'discount' => 'nullable|numeric',
             'totalPrice' => 'required|numeric',
+            'orderFrom' => 'nullable|string|max:255',
 
         ];
     }

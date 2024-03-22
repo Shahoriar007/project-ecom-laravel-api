@@ -90,7 +90,7 @@
                 <img style="max-width: 90%;" src="{{ public_path('images/barcode.png') }}" alt="Barcode">
             </div>
             <div class="column three-columns">
-                <div class="single-column">Inside Dhaka</div>
+                <div class="single-column">{{ $order->order_from }}</div>
                 <div class="single-column">Cash On Delivery</div>
                 <div class="single-column">{{ $order->total_price }}</div>
             </div>
@@ -101,8 +101,8 @@
             </div>
             <div class="column three-columns">
                 <div class="single-column">Reciplient: {{ $order->customer->full_name }}, {{ $order->detail_address }}, {{ $order->customer->phone }}</div>
-                <div class="single-column">Seller: Flare Brand - www.flarebrandbd.com - newmarket dhaka - 8801994635351</div>
-                <div class="single-column">Package Weight: 2</div>
+                <div class="single-column">Seller: Flare Brand - www.flarebrandbd.com - newmarket dhaka - +8801994635351</div>
+                {{-- <div class="single-column">Package Weight: 2</div> --}}
             </div>
         </div>
     </div>

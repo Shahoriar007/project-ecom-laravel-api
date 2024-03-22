@@ -8,6 +8,7 @@ use App\Transformers\NotificationTransformer;
 use App\Repositories\AdminPanel\Order\OrderRepository;
 use App\Transformers\AdminPanel\Order\OrderTransformer;
 use App\Http\Requests\AdminPanel\Order\StoreOrderRequest;
+use App\Transformers\MasterSettingTransformer;
 
 class OrderController extends Controller
 {
@@ -90,4 +91,25 @@ class OrderController extends Controller
         $notification = $this->repository->markAsRead($request->id);
         return $this->response->item($notification, new NotificationTransformer());
     }
+
+    // delivery charge
+    public function getDeliveryCharge()
+    {
+        $data = $this->repository->getDeliveryCharge();
+        return $this->response->collection($data, new MasterSettingTransformer());
+    }
+
+    public function updateDeliveryCharge(Request $request)
+    {
+        $data = $this->repository->updateDeliveryCharge($request);
+        return $this->response->item($data, new MasterSettingTransformer());
+    }
+
+    // comment
+    public function updateComment(Request $request)
+    {
+        $data = $this->repository->updateComment($request);
+        return $this->response->item($data, new OrderTransformer());
+    }
+
 }

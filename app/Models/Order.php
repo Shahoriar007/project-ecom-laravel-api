@@ -22,6 +22,8 @@ class Order extends Model
         'order_notes',
         'payment_method',
         'status',
+        'order_from',
+        'comment',
 
     ];
 

@@ -28,4 +28,10 @@ class CustomerController extends Controller
 
         return $this->response->paginator($data, new CustomerTransformer());
     }
+
+    public function bandActive($id)
+    {
+        $data = $this->repository->bandActive($id);
+        return $this->response->item($data, new CustomerTransformer());
+    }
 }
