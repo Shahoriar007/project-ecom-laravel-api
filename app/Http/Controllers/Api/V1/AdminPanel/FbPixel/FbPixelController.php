@@ -42,6 +42,12 @@ class FbPixelController extends Controller
         return $this->response()->noContent();
     }
 
+    public function getPixelCode()
+    {
+        $data = $this->repository->getPixelCode();
+        return $this->response->item($data, new FbPixelTransformer());
+    }
+
 
 
 }

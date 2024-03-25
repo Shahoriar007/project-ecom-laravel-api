@@ -90,10 +90,15 @@ class FbPixelRepository
         }
 
         try {
-            // $data->delete();
+            $data->delete();
         } catch (\Throwable $th) {
 
             throw new DeleteResourceFailedException('Delete Failed');
         }
+    }
+
+    public function getPixelCode()
+    {
+        return $this->model->first();
     }
 }
