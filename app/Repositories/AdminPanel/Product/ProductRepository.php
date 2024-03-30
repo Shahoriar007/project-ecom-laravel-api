@@ -57,10 +57,24 @@ class ProductRepository
         return $query->paginate($show);
     }
 
-    public function activeAll()
+    public function activeAll($category, $subCategory, $childCategory)
     {
+        $query = $this->model->query()->where('status', true);
 
-        return $this->model->where('status', true)->get();
+        if ($category) {
+            $query->where('category_id', $category);
+        }
+
+        if ($subCategory) {
+            $query->where('sub_category_id', $subCategory);
+        }
+
+        if ($childCategory) {
+            $query->where('child_category_id', $childCategory);
+        }
+
+        return $query->get();
+
     }
 
     public function findById($id)

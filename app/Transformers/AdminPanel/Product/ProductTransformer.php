@@ -45,8 +45,11 @@ class ProductTransformer extends TransformerAbstract
             'large_pictures' => $product->getMedia('large_pictures'),
             'small_pictures' =>  $product->getMedia('large_pictures'),
             'category_id' => $product->category_id,
+            'category' => $product->category,
             'sub_category_id' => $product->sub_category_id,
+            'sub_category' => $product->subCategory,
             'child_category_id' => $product->child_category_id,
+            'child_category' => $product->childCategory,
             'video_link' => $product->video_link,
 
             'created_by' => $product->created_by,

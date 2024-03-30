@@ -39,9 +39,13 @@ class ProductController extends Controller
         return $this->response->collection($data, new ProductTransformer());
     }
 
-    public function activeAll()
+    public function activeAll(Request $request)
     {
-        $data = $this->repository->activeAll();
+        $category = $request['category'];
+        $subCategory = $request['subCategory'];
+        $childCategory = $request['childCategory'];
+
+        $data = $this->repository->activeAll($category, $subCategory, $childCategory);
         return $this->response->collection($data, new ProductTransformer());
     }
     /**
