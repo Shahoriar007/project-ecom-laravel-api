@@ -46,6 +46,7 @@ class StoreOrderRequest extends FormRequest
             'totalPrice' => 'required|numeric',
             'orderFrom' => 'nullable|string|max:255',
 
+
         ];
     }
 }

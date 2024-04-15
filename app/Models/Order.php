@@ -24,6 +24,8 @@ class Order extends Model
         'status',
         'order_from',
         'comment',
+        'is_sticker_printed',
+        'large_order_id',
 
     ];
 

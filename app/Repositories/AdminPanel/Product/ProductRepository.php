@@ -43,16 +43,17 @@ class ProductRepository
 
     public function index($show, $sort, $search)
     {
-        $query  = $this->model->query()->with(['labels', 'categories']);
+        $query  = $this->model->query()->with(['labels', 'category']);
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
         }
 
-        foreach ($sort as $key => $value) {
-            $decode_data = json_decode($value);
-            $query->orderBy($decode_data->field, $decode_data->type);
-        }
+        // sort functionality
+        // foreach ($sort as $key => $value) {
+        //     $decode_data = json_decode($value);
+        //     $query->orderBy($decode_data->field, $decode_data->type);
+        // }
 
         return $query->paginate($show);
     }

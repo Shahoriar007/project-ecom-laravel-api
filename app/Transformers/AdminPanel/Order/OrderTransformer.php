@@ -26,6 +26,8 @@ class OrderTransformer extends TransformerAbstract
             'updated_at' => $order->updated_at,
             'comment' => $order->comment,
             'order_from' => $order->order_from,
+            'is_sticker_printed' => $order->is_sticker_printed,
+            'large_order_id' => $order->large_order_id,
             'customer' => $order->customer,
             'products' => $this->transformProducts($order->products),
 

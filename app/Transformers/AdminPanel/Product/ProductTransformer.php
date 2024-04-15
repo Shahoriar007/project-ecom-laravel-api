@@ -41,7 +41,7 @@ class ProductTransformer extends TransformerAbstract
             'rated' => (bool)$product->rated,
             'until' => $product->until,
             'labels' => $product->labels,
-            'product_categories' => $product->categories,
+            // 'product_categories' => $product->categories,
             'large_pictures' => $product->getMedia('large_pictures'),
             'small_pictures' =>  $product->getMedia('large_pictures'),
             'category_id' => $product->category_id,

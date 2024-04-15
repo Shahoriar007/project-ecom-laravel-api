@@ -81,6 +81,11 @@ class OrderRepository
                     // 'status' => $validated['status'],
                 ]);
 
+                //update this order large_order_id with order id + 100000
+                $order->update([
+                    'large_order_id' => $order->id + 100000
+                ]);
+
                 $orderProducts = collect($validated['products'])->mapWithKeys(function ($product) {
                     return [$product['id'] => ['quantity' => $product['qty']]];
                 })->toArray();
@@ -126,9 +131,10 @@ class OrderRepository
 
         if (!empty($search)) {
             $query->where('detail_address', 'LIKE', "%$search%")
-                ->orWhere('id', 'LIKE', "%$search%")
+                ->orWhere('large_order_id', 'LIKE', "%$search%")
                 ->orWhereHas('customer', function ($query) use ($search) {
-                    $query->where('full_name', 'LIKE', "%$search%");
+                    $query->where('full_name', 'LIKE', "%$search%")
+                        ->orWhere('phone', 'LIKE', "%$search%");
                 });
         }
 
@@ -210,6 +216,11 @@ class OrderRepository
                 // Render the 'pdf.sticker' view with the order data and get the HTML content
                 $view = view('pdf.sticker', ['order' => $order]);
                 $htmlContent .= $view->render();
+
+                //update is_sticker_printed to yes
+                $order->update([
+                    'is_sticker_printed' => 'yes'
+                ]);
             }
 
             // Create a new PDF with the combined HTML content

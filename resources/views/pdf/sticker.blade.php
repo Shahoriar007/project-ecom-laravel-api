@@ -74,7 +74,7 @@
                 <img style="max-width: 40%;" src="{{ public_path('images/logo.jpeg') }}" alt="">
             </div>
             <div class="column order-details">
-                <div>Order-ID:{{ $order->id }}</div>
+                <div>Order-ID:{{ $order->large_order_id }}</div>
             </div>
             <div class="column barcode">
                 {{ now()->format('Y-m-d') }}
