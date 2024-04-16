@@ -31,7 +31,10 @@ $api->version('v1', function ($api) {
         $api->post('delivery-charge', [OrderController::class, 'updateDeliveryCharge']);
 
         //comment
-        $api->post('update-comment', [OrderController::class, 'updateComment']);
+        $api->post('update-follow-up', [OrderController::class, 'updateFollowUp']);
+
+        //follow-up
+        $api->get('/followUp/msg/{id}', [OrderController::class, 'getFollowUpMsg']);
 
 
     });

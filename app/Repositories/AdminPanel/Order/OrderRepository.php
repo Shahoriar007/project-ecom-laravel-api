@@ -9,6 +9,7 @@ use App\Models\Customer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Models\DatabaseNotification;
+use App\Models\FollowUp;
 use App\Models\MasterSetting;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\NewOrderNotification;
@@ -23,15 +24,17 @@ class OrderRepository
     private User $user;
     private DatabaseNotification $notificationModel;
     private MasterSetting $masterSetting;
+    private FollowUp $followUp;
 
 
-    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel, MasterSetting $masterSetting)
+    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel, MasterSetting $masterSetting, FollowUp $followUp)
     {
         $this->model = $model;
         $this->customerModel = $customerModel;
         $this->user = $user;
         $this->notificationModel = $notificationModel;
         $this->masterSetting = $masterSetting;
+        $this->followUp = $followUp;
     }
 
 
@@ -343,21 +346,29 @@ class OrderRepository
         }
     }
 
-    public function updateComment($request)
+    public function updateFollowUp($request)
     {
-        try {
-            $order = $this->model->findOrFail($request['id']);
-        } catch (\Throwable $th) {
-            throw new NotFoundHttpException('Order Not Found');
-        }
+
 
         try {
-            $order->update([
-                'comment' => $request->comment
+            $followUp = $this->followUp->create([
+                'order_id' => $request->order_id,
+                'user_id' => Auth::user()->id,
+                'msg' => $request->msg,
             ]);
-            return $order;
+            return $followUp;
         } catch (\Throwable $th) {
-            throw new NotFoundHttpException('Comment Update Failed');
+            throw new NotFoundHttpException('Update Failed');
+        }
+    }
+
+    public function getFollowUpMsg($id)
+    {
+        try {
+            $followUpData = $this->followUp->where('order_id', $id)->with('user')->get();
+            return $followUpData;
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Follow Up Message Not Found');
         }
     }
 }
