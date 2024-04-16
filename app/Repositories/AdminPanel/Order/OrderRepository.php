@@ -139,7 +139,6 @@ class OrderRepository
         }
 
         if (!empty($rangeDate)) {
-            info($rangeDate);
 
             if (strpos($rangeDate, ' to ') !== false) {
                 // $rangeDate is a range like "2024-03-04 to 2024-03-06"

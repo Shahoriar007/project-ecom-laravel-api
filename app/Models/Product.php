@@ -41,6 +41,8 @@ class Product extends Model implements HasMedia
         'child_category_id',
         'rated',
         'until',
+        'video_link',
+        'priority',
         'created_by',
         'updated_by',
     ];
