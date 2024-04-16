@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Dingo\Api\Exception\StoreResourceFailedException;
 use Dingo\Api\Exception\DeleteResourceFailedException;
 use Dingo\Api\Exception\UpdateResourceFailedException;
@@ -44,6 +45,7 @@ class ProductRepository
     public function index($show, $sort, $search)
     {
         $query  = $this->model->query()->with(['labels', 'category']);
+        $query->orderBy('id', 'desc');
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
@@ -74,6 +76,11 @@ class ProductRepository
             $query->where('child_category_id', $childCategory);
         }
 
+        // Order by priority in descending order if the 'priority' column exists
+        if (Schema::hasColumn($this->model->getTable(), 'priority')) {
+            $query->orderBy('priority', 'desc');
+        }
+
         return $query->get();
 
     }
@@ -101,9 +108,13 @@ class ProductRepository
         try {
             return  DB::transaction(function () use ($validated, $request) {
 
+                info($validated);
+
                 $model = $this->model->create(
                     [
                         'name' => $validated['name'],
+                        // 'priority' => $validated['priority'],
+                        'video_link' => $validated['video_link'],
                         'price' => $validated['price'],
                         'sku' => $validated['sku'],
                         'stock' => $validated['stock'],
@@ -199,6 +210,8 @@ class ProductRepository
 
                 $model->update([
                     'name' => $validated['name'],
+                    'priority' => $validated['priority'],
+                    'video_link' => $validated['video_link'] ?? null,
                     'status' => to_boolean($validated['status']),
                     'short_description' => $validated['short_description'],
                     'offer_notice' => $validated['offer_notice'],

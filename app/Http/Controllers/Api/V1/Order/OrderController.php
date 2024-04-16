@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Api\V1\Order;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Transformers\NotificationTransformer;
+use App\Transformers\MasterSettingTransformer;
 use App\Repositories\AdminPanel\Order\OrderRepository;
 use App\Transformers\AdminPanel\Order\OrderTransformer;
 use App\Http\Requests\AdminPanel\Order\StoreOrderRequest;
-use App\Transformers\MasterSettingTransformer;
+use App\Transformers\AdminPanel\FollowUp\FollowUpTransformer;
 
 class OrderController extends Controller
 {
@@ -105,11 +106,17 @@ class OrderController extends Controller
         return $this->response->item($data, new MasterSettingTransformer());
     }
 
-    // comment
-    public function updateComment(Request $request)
+    // updateFollowUp
+    public function updateFollowUp(Request $request)
     {
-        $data = $this->repository->updateComment($request);
-        return $this->response->item($data, new OrderTransformer());
+        $data = $this->repository->updateFollowUp($request);
+        return $this->response->item($data, new FollowUpTransformer());
+    }
+
+    public function getFollowUpMsg($id)
+    {
+        $data = $this->repository->getFollowUpMsg($id);
+        return $this->response->item($data, new FollowUpTransformer());
     }
 
 }

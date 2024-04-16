@@ -66,7 +66,7 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        info($request->all());
         $validated = $request->validated();
         $data = $this->repository->store($validated, $request);
         return $this->response->item($data, new ProductTransformer())->setStatusCode(201);

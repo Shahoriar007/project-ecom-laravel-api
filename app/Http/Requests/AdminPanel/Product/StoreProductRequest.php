@@ -44,6 +44,7 @@ class StoreProductRequest extends FormRequest
             'labels' => 'required|array',
             'labels*' => 'required|string',
             'video_link' => 'nullable|string|max:800',
+            `priority` => 'nullable|integer|min:0',
 
         ];
     }
