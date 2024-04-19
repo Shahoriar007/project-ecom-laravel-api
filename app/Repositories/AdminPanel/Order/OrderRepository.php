@@ -42,8 +42,8 @@ class OrderRepository
     {
         try {
             return DB::transaction(function () use ($validated) {
-                //check from customer table if customer exists with phone or email
-                $customer = $this->customerModel->where('email', $validated['email'])->orWhere('phone', $validated['phone'])->first();
+                //check from customer table if customer exists with phone
+                $customer = $this->customerModel->where('phone', $validated['phone'])->first();
 
                 // save customer data to customer table
                 if ($customer) {

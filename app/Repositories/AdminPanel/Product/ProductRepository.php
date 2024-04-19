@@ -108,13 +108,11 @@ class ProductRepository
         try {
             return  DB::transaction(function () use ($validated, $request) {
 
-                info($validated);
-
                 $model = $this->model->create(
                     [
                         'name' => $validated['name'],
                         // 'priority' => $validated['priority'],
-                        'video_link' => $validated['video_link'],
+                        'video_link' => $validated['video_link'] ?? null,
                         'price' => $validated['price'],
                         'sku' => $validated['sku'],
                         'stock' => $validated['stock'],
