@@ -42,7 +42,7 @@ class PermissionSeeder extends Seeder
                 // ['name' => PermissionsService::USERS_PROFILE_EDIT, 'group' => 'others', 'guard_name' => 'api'],
             ],
 
-            'Categories' => [
+            'Parent Categories' => [
                 ['name' => PermissionsService::CATEGORIES_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
                 ['name' => PermissionsService::CATEGORIES_CREATE, 'group' => 'create', 'guard_name' => 'api'],
                 ['name' => PermissionsService::CATEGORIES_SHOW, 'group' => 'show', 'guard_name' => 'api'],
@@ -50,6 +50,25 @@ class PermissionSeeder extends Seeder
                 ['name' => PermissionsService::CATEGORIES_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
 
             ],
+
+            'Sub Categories' => [
+                ['name' => PermissionsService::SUB_CATEGORIES_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::SUB_CATEGORIES_CREATE, 'group' => 'create', 'guard_name' => 'api'],
+                ['name' => PermissionsService::SUB_CATEGORIES_SHOW, 'group' => 'show', 'guard_name' => 'api'],
+                ['name' => PermissionsService::SUB_CATEGORIES_EDIT, 'group' => 'edit', 'guard_name' => 'api'],
+                ['name' => PermissionsService::SUB_CATEGORIES_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
+
+            ],
+
+            'Child Categories' => [
+                ['name' => PermissionsService::CHILD_CATEGORIES_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CHILD_CATEGORIES_CREATE, 'group' => 'create', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CHILD_CATEGORIES_SHOW, 'group' => 'show', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CHILD_CATEGORIES_EDIT, 'group' => 'edit', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CHILD_CATEGORIES_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
+
+            ],
+
             'Products' => [
                 ['name' => PermissionsService::PRODUCTS_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
                 ['name' => PermissionsService::PRODUCTS_CREATE, 'group' => 'create', 'guard_name' => 'api'],
@@ -58,6 +77,33 @@ class PermissionSeeder extends Seeder
                 ['name' => PermissionsService::PRODUCTS_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
 
             ],
+
+            'Customer' => [
+                ['name' => PermissionsService::CUSTOMERS_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CUSTOMERS_SHOW, 'group' => 'show', 'guard_name' => 'api'],
+                ['name' => PermissionsService::CUSTOMERS_BLOCK, 'group' => 'others', 'guard_name' => 'api'],
+
+            ],
+
+            'Orders' => [
+                ['name' => PermissionsService::ORDERS_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::ORDERS_SHOW, 'group' => 'show', 'guard_name' => 'api'],
+                ['name' => PermissionsService::ORDERS_STATUS_CHANGE, 'group' => 'others', 'guard_name' => 'api'],
+                ['name' => PermissionsService::ORDERS_FOLLOW_UP_NAME_SHOW, 'group' => 'others', 'guard_name' => 'api'],
+
+            ],
+
+            'Fb Pixel' => [
+                ['name' => PermissionsService::FB_PIXEL_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::FB_PIXEL_CREATE, 'group' => 'create', 'guard_name' => 'api'],
+                ['name' => PermissionsService::FB_PIXEL_DELETE, 'group' => 'delete', 'guard_name' => 'api'],
+            ],
+
+            'Master Settings' => [
+                ['name' => PermissionsService::MASTER_SETTINGS_ACCESS, 'group' => 'access', 'guard_name' => 'api'],
+                ['name' => PermissionsService::DELIVERY_CHARGE_EDIT, 'group' => 'others', 'guard_name' => 'api'],
+
+            ]
 
 
         ];
