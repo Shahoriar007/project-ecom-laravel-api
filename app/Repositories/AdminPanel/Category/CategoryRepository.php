@@ -10,6 +10,7 @@ use App\Models\Category;
 
 use Illuminate\Support\Facades\DB;
 
+use Illuminate\Support\Facades\Schema;
 use Dingo\Api\Exception\StoreResourceFailedException;
 use Dingo\Api\Exception\DeleteResourceFailedException;
 use Dingo\Api\Exception\UpdateResourceFailedException;
@@ -58,18 +59,28 @@ class CategoryRepository
 
     public function activeAll()
     {
-        $query = $this->model->where('status', true)->get();
-        $query->load('subCategories');
-        $query->load('subCategories.childCategories');
+        $query = $this->model->where('status', true);
 
-        return $query;
+        // Order by priority in ascending order if the 'priority' column exists
+        if (Schema::hasColumn($this->model->getTable(), 'priority')) {
+            $query->orderBy('priority', 'asc');
+        }
+
+        $query->with('subCategories', 'subCategories.childCategories');
+
+        return $query->get();
     }
 
     public function featuredAll()
     {
-        $query = $this->model->where('is_featured', true)->get();
+        $query = $this->model->where('is_featured', true);
 
-        return $query;
+        // Order by priority in ascending order if the 'priority' column exists
+        if (Schema::hasColumn($this->model->getTable(), 'priority')) {
+            $query->orderBy('priority', 'asc');
+        }
+
+        return $query->get();
     }
 
     public function findById($id)

@@ -26,6 +26,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'priority' => 'nullable|integer',
             'status' => 'required|boolean',
             'is_featured' => 'nullable|boolean',
             'description' => 'required|string',

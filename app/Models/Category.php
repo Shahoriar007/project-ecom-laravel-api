@@ -27,6 +27,7 @@ class Category extends Model implements HasMedia
         'is_featured',
         'slug',
         'status',
+        'priority',
         'created_by',
         'updated_by'
 

@@ -24,6 +24,7 @@ class CategoryTransformer extends TransformerAbstract
         return [
             'id' => $category->id,
             'name' => $category->name,
+            'priority' => $category->priority,
             'slug' => $category->slug,
             'status' => (bool)$category->status,
             'is_featured' => (bool)$category->is_featured,
