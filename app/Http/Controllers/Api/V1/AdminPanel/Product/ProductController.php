@@ -131,4 +131,11 @@ class ProductController extends Controller
         $data = $this->repository->totalProducts();
         return $this->response->array(['total_products' => $data]);
     }
+
+    public function searchProduct(Request $request)
+    {
+        $search = $request->input('search_term');
+        $data = $this->repository->searchProduct($search);
+        return $this->response->collection($data, new ProductTransformer());
+    }
 }

@@ -291,4 +291,9 @@ class ProductRepository
     {
         return $this->model->count();
     }
+
+    public function searchProduct($search)
+    {
+        return $this->model->where('name', 'LIKE', "%$search%")->get();
+    }
 }
