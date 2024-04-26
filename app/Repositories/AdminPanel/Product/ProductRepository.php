@@ -296,4 +296,9 @@ class ProductRepository
     {
         return $this->model->where('name', 'LIKE', "%$search%")->get();
     }
+
+    public function relatedProducts($id, $avoidProductId)
+    {
+        return $this->model->where('id', '!=', $avoidProductId)->where('category_id', $id)->get();
+    }
 }

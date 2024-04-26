@@ -13,6 +13,8 @@ $api->version('v1', function ($api) {
 
     //search product
     $api->get('product-search', [ProductController::class, 'searchProduct']);
+    //get related product
+    $api->get('related-products/{id}', [ProductController::class, 'relatedProducts']);
 
     $api->group(['middleware' => 'jwt.auth'], function ($api) {
         $api->resource('products', ProductController::class);

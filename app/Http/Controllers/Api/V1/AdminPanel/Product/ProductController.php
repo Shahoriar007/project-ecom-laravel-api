@@ -138,4 +138,11 @@ class ProductController extends Controller
         $data = $this->repository->searchProduct($search);
         return $this->response->collection($data, new ProductTransformer());
     }
+
+    public function relatedProducts($id, Request $request)
+    {
+        $avoidProductId = $request['avoid_product_id'];
+        $data = $this->repository->relatedProducts($id, $avoidProductId);
+        return $this->response->collection($data, new ProductTransformer());
+    }
 }
