@@ -76,9 +76,9 @@ class ProductRepository
             $query->where('child_category_id', $childCategory);
         }
 
-        // Order by priority in descending order if the 'priority' column exists
+        // Order by priority in ascending order if the 'priority' column exists
         if (Schema::hasColumn($this->model->getTable(), 'priority')) {
-            $query->orderBy('priority', 'desc');
+            $query->orderBy('priority', 'asc');
         }
 
         return $query->get();
@@ -108,13 +108,12 @@ class ProductRepository
         try {
             return  DB::transaction(function () use ($validated, $request) {
 
-                info($validated);
 
                 $model = $this->model->create(
                     [
                         'name' => $validated['name'],
-                        // 'priority' => $validated['priority'],
-                        'video_link' => $validated['video_link'],
+                        'priority' => $validated['priority'],
+                        'video_link' => $validated['video_link'] ?? null,
                         'price' => $validated['price'],
                         'sku' => $validated['sku'],
                         'stock' => $validated['stock'],
@@ -291,5 +290,15 @@ class ProductRepository
     public function totalProducts()
     {
         return $this->model->count();
+    }
+
+    public function searchProduct($search)
+    {
+        return $this->model->where('name', 'LIKE', "%$search%")->get();
+    }
+
+    public function relatedProducts($id, $avoidProductId)
+    {
+        return $this->model->where('id', '!=', $avoidProductId)->where('category_id', $id)->get();
     }
 }

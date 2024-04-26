@@ -32,6 +32,7 @@ class StoreProductRequest extends FormRequest
             'offer_notice' => 'required|string',
             'sale_price' => 'required|numeric|min:0',
             'status' => 'required|boolean',
+            'priority' => 'nullable|integer',
             'is_hot' => 'required|boolean',
             'is_sale' => 'required|boolean',
             'is_new' => 'required|boolean',
@@ -44,7 +45,6 @@ class StoreProductRequest extends FormRequest
             'labels' => 'required|array',
             'labels*' => 'required|string',
             'video_link' => 'nullable|string|max:800',
-            `priority` => 'nullable|integer|min:0',
 
         ];
     }

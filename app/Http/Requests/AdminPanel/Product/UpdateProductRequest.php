@@ -47,7 +47,7 @@ class UpdateProductRequest extends FormRequest
             'image_exists' => 'boolean',
             'remove_all_image' => 'boolean',
             'video_link' => 'nullable|string|max:800',
-            'priority' => 'nullable|integer|min:0',
+            'priority' => 'nullable|integer',
         ];
     }
 

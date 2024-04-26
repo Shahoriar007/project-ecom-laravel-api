@@ -7,27 +7,27 @@ class PermissionsService
     // Dashboard
     public const DASHBOARD_ACCESS = 'dashboard_access';
 
-    // Division
-    public const DIVISION_ACCESS = 'division_access';
-    public const DIVISION_CREATE = 'division_create';
-    public const DIVISION_EDIT = 'division_edit';
-    public const DIVISION_DELETE = 'division_delete';
+    // // Division
+    // public const DIVISION_ACCESS = 'division_access';
+    // public const DIVISION_CREATE = 'division_create';
+    // public const DIVISION_EDIT = 'division_edit';
+    // public const DIVISION_DELETE = 'division_delete';
 
-    // Department
-    public const DEPARTMENT_ACCESS = 'department_access';
-    public const DEPARTMENT_CREATE = 'department_create';
-    public const DEPARTMENT_SHOW = 'department_show';
-    public const DEPARTMENT_EDIT = 'department_edit';
-    public const DEPARTMENT_DELETE = 'department_delete';
-    public const DEPARTMENT_EMPLOYEE_ADD = 'department_employee_add';
-    public const DEPARTMENT_EMPLOYEE_DELETE = 'department_employee_delete';
+    // // Department
+    // public const DEPARTMENT_ACCESS = 'department_access';
+    // public const DEPARTMENT_CREATE = 'department_create';
+    // public const DEPARTMENT_SHOW = 'department_show';
+    // public const DEPARTMENT_EDIT = 'department_edit';
+    // public const DEPARTMENT_DELETE = 'department_delete';
+    // public const DEPARTMENT_EMPLOYEE_ADD = 'department_employee_add';
+    // public const DEPARTMENT_EMPLOYEE_DELETE = 'department_employee_delete';
 
-    // Designations
-    public const DESIGNATION_ACCESS = 'designation_access';
-    public const DESIGNATION_CREATE = 'designation_create';
-    public const DESIGNATION_SHOW = 'designation_show';
-    public const DESIGNATION_EDIT = 'designation_edit';
-    public const DESIGNATION_DELETE = 'designation_delete';
+    // // Designations
+    // public const DESIGNATION_ACCESS = 'designation_access';
+    // public const DESIGNATION_CREATE = 'designation_create';
+    // public const DESIGNATION_SHOW = 'designation_show';
+    // public const DESIGNATION_EDIT = 'designation_edit';
+    // public const DESIGNATION_DELETE = 'designation_delete';
 
     // Roles
     public const ROLES_ACCESS = 'roles_access';
@@ -42,15 +42,29 @@ class PermissionsService
     public const USERS_SHOW = 'users_show';
     public const USERS_EDIT = 'users_edit';
     public const USERS_DELETE = 'users_delete';
-    public const USERS_PROFILE_SHOW = 'users_profile_show';
-    public const USERS_PROFILE_EDIT = 'users_profile_edit';
 
-    // Categories
+
+    // Parent Categories
     public const CATEGORIES_ACCESS = 'categories_access';
     public const CATEGORIES_CREATE = 'categories_create';
     public const CATEGORIES_SHOW = 'categories_show';
     public const CATEGORIES_EDIT = 'categories_edit';
     public const CATEGORIES_DELETE = 'categories_delete';
+
+    // Sub Categories
+    public const SUB_CATEGORIES_ACCESS = 'sub_categories_access';
+    public const SUB_CATEGORIES_CREATE = 'sub_categories_create';
+    public const SUB_CATEGORIES_SHOW = 'sub_categories_show';
+    public const SUB_CATEGORIES_EDIT = 'sub_categories_edit';
+    public const SUB_CATEGORIES_DELETE = 'sub_categories_delete';
+
+    // Child Categories
+    public const CHILD_CATEGORIES_ACCESS = 'child_categories_access';
+    public const CHILD_CATEGORIES_CREATE = 'child_categories_create';
+    public const CHILD_CATEGORIES_SHOW = 'child_categories_show';
+    public const CHILD_CATEGORIES_EDIT = 'child_categories_edit';
+    public const CHILD_CATEGORIES_DELETE = 'child_categories_delete';
+
 
     // Products
     public const PRODUCTS_ACCESS = 'products_access';
@@ -58,4 +72,29 @@ class PermissionsService
     public const PRODUCTS_SHOW = 'products_show';
     public const PRODUCTS_EDIT = 'products_edit';
     public const PRODUCTS_DELETE = 'products_delete';
+
+    // Customer
+    public const CUSTOMERS_ACCESS = 'customers_access';
+    public const CUSTOMERS_SHOW = 'customers_show';
+    public const CUSTOMERS_BLOCK = 'customers_block';
+
+    // Orders
+    public const ORDERS_ACCESS = 'orders_access';
+    public const ORDERS_SHOW = 'orders_show';
+    public const ORDERS_STATUS_CHANGE = 'orders_status_change';
+    public const ORDERS_FOLLOW_UP_NAME_SHOW = 'orders_follow_up_name_show';
+
+    // Fb Pixel
+    public const FB_PIXEL_ACCESS = 'fb_pixel_access';
+    public const FB_PIXEL_CREATE = 'fb_pixel_create';
+    public const FB_PIXEL_DELETE = 'fb_pixel_delete';
+
+    // Master Settings
+    public const MASTER_SETTINGS_ACCESS = 'master_settings_access';
+    public const DELIVERY_CHARGE_EDIT = 'delivery_charge_edit';
+
+
+
+
+
 }

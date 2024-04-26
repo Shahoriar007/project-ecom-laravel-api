@@ -66,7 +66,6 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        info($request->all());
         $validated = $request->validated();
         $data = $this->repository->store($validated, $request);
         return $this->response->item($data, new ProductTransformer())->setStatusCode(201);
@@ -131,5 +130,19 @@ class ProductController extends Controller
     {
         $data = $this->repository->totalProducts();
         return $this->response->array(['total_products' => $data]);
+    }
+
+    public function searchProduct(Request $request)
+    {
+        $search = $request->input('search_term');
+        $data = $this->repository->searchProduct($search);
+        return $this->response->collection($data, new ProductTransformer());
+    }
+
+    public function relatedProducts($id, Request $request)
+    {
+        $avoidProductId = $request['avoid_product_id'];
+        $data = $this->repository->relatedProducts($id, $avoidProductId);
+        return $this->response->collection($data, new ProductTransformer());
     }
 }
