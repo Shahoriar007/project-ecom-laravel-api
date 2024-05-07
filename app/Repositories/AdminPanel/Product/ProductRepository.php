@@ -301,4 +301,22 @@ class ProductRepository
     {
         return $this->model->where('id', '!=', $avoidProductId)->where('category_id', $id)->get();
     }
+
+    public function updateStatus($id)
+    {
+        try {
+            $data = $this->model->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+
+        try {
+            $data->update([
+                'status' => !$data->status
+            ]);
+            return $data;
+        } catch (\Throwable $th) {
+            throw new UpdateResourceFailedException('Product Status Update Failed');
+        }
+    }
 }

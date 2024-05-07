@@ -145,4 +145,10 @@ class ProductController extends Controller
         $data = $this->repository->relatedProducts($id, $avoidProductId);
         return $this->response->collection($data, new ProductTransformer());
     }
+
+    public function updateStatus($id)
+    {
+        $data = $this->repository->updateStatus($id);
+        return $this->response->item($data, new ProductTransformer());
+    }
 }

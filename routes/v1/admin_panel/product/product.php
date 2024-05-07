@@ -18,5 +18,7 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => 'jwt.auth'], function ($api) {
         $api->resource('products', ProductController::class);
+
+        $api->get('product/status/update/{id}', [ProductController::class, 'updateStatus']);
     });
 });
