@@ -127,4 +127,11 @@ class CategoryController extends Controller
 
         return $this->response()->noContent();
     }
+
+    public function updateStatus($id)
+    {
+        $data = $this->repository->updateStatus($id);
+
+        return $this->response->item($data, new CategoryTransformer());
+    }
 }

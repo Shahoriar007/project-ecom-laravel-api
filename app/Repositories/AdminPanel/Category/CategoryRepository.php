@@ -194,6 +194,26 @@ class CategoryRepository
     //     }
     // }
 
+    public function updateStatus($id)
+    {
+        try {
+            $data = $this->findById($id);
+        } catch (\Throwable $th) {
+
+            throw new NotFoundHttpException('Not Found');
+        }
+
+        try {
+            $data->update([
+                'status' => !$data->status
+            ]);
+        } catch (\Throwable $th) {
+
+            throw new UpdateResourceFailedException('Update Failed');
+        }
+
+        return $data;
+    }
 
 
 

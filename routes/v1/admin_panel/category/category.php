@@ -11,5 +11,7 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => 'jwt.auth'], function ($api) {
         $api->resource('categories', CategoryController::class);
+
+        $api->get('categories/status/update/{id}', [CategoryController::class, 'updateStatus']);
     });
 });
