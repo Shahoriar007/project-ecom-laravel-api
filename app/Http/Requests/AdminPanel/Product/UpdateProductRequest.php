@@ -28,7 +28,7 @@ class UpdateProductRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', Rule::unique('products')->ignore($this->product)],
             'status' => 'required|boolean',
             'short_description' => 'required|string',
-            'offer_notice' => 'required|string',
+            'offer_notice' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'sale_price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
