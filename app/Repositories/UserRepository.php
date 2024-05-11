@@ -26,13 +26,20 @@ class UserRepository
         $this->roleModel = $roleModel;
     }
 
-    public function index($show, $sort, $search)
+    public function index($show, $sort, $search, $filterStatus)
     {
 
         $query  = $this->model->query();
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
+        }
+
+        if (!empty($filterStatus) &&  $filterStatus == 'active') {
+            $query->where('status', 1);
+        }
+        else if(!empty($filterStatus) &&  $filterStatus == 'inactive'){
+            $query->where('status', 0);
         }
 
         foreach ($sort as $key => $value) {
@@ -101,10 +108,18 @@ class UserRepository
             }
         }
 
-        if (!empty($validated['status'])) {
+        if ($validated['status']) {
             try {
                 $model->update([
                     'status' => $validated['status']
+                ]);
+            } catch (\Throwable $th) {
+                throw new UpdateResourceFailedException('Update Failed');
+            }
+        }else{
+            try {
+                $model->update([
+                    'status' => 0
                 ]);
             } catch (\Throwable $th) {
                 throw new UpdateResourceFailedException('Update Failed');

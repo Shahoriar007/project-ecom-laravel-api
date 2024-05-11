@@ -18,6 +18,7 @@ $api->version('v1', function ($api) {
 
     $api->group(['middleware' => 'jwt.auth'], function ($api) {
         $api->resource('products', ProductController::class);
+        $api->post('products/modal/two/{id}', [ProductController::class, 'modalTwoUpdate']);
 
         $api->get('product/status/update/{id}', [ProductController::class, 'updateStatus']);
     });

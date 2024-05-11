@@ -17,12 +17,19 @@ class CustomerRepository
         $this->model = $model;
     }
 
-    public function index($show, $sort, $search)
+    public function index($show, $sort, $search, $filter)
     {
         $query  = $this->model->query();
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
+        }
+        info($filter);
+
+        if ($filter == 'active') {
+            $query->where('is_band', 0);
+        } elseif ($filter == 'blocked') {
+            $query->where('is_band', 1);
         }
 
         // foreach ($sort as $key => $value) {

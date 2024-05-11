@@ -45,6 +45,11 @@ class OrderRepository
                 //check from customer table if customer exists with phone
                 $customer = $this->customerModel->where('phone', $validated['phone'])->first();
 
+                //check the customer baned or not
+                if ($customer && $customer->is_band == 1) {
+                    return response("Customer is banned", 400);
+                }
+
                 // save customer data to customer table
                 if ($customer) {
                     $customer->update([
@@ -89,13 +94,28 @@ class OrderRepository
                     'large_order_id' => $order->id + 100000
                 ]);
 
+                // Special case order for pending-2 status
+                if (substr($validated['fullName'], 0, 5) == '#####') {
+                    $order->update([
+                        'status' => 'pending-2'
+                    ]);
+
+                    //avoid the first 5 characters (#####)
+                    $updatedName = substr($validated['fullName'], 5);
+
+                    $customer->update([
+                        'first_name' => $updatedName,
+                        'full_name' => $updatedName,
+                    ]);
+                }
+
                 $orderProducts = collect($validated['products'])->mapWithKeys(function ($product) {
                     return [$product['id'] => ['quantity' => $product['qty']]];
                 })->toArray();
 
                 $order->products()->sync($orderProducts);
 
-                // send notification to customer
+                // send notification to admin users
                 $users = $this->user->all();
                 $this->sendNotification($users, $order);
 

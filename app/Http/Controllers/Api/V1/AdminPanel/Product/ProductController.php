@@ -27,8 +27,9 @@ class ProductController extends Controller
         $show = $request->input('show', 10);
         $sort = $request->input('sort', []);
         $search = $request->input('q');
+        $filterStatus = $request->input('filterStatus');
 
-        $data = $this->repository->index($show, $sort, $search);
+        $data = $this->repository->index($show, $sort, $search, $filterStatus);
 
         return $this->response->paginator($data, new ProductTransformer());
     }
@@ -106,6 +107,19 @@ class ProductController extends Controller
         $validated = $request->validated();
         $data = $this->repository->update($id, $validated, $request);
         return $this->response->item($data, new ProductTransformer())->setStatusCode(200);
+    }
+
+    public function modalTwoUpdate(Request $request, $id)
+    {
+
+        info($request->all());
+        $validated = $request->validate([
+            'stock' => 'nullable|integer|min:0',
+            'price' => 'nullable|numeric|min:0',
+            'priority' => 'nullable|integer',
+        ]);
+        $data = $this->repository->modalTwoUpdate($validated, $id);
+        return $this->response->item($data, new ProductTransformer());
     }
 
     /**

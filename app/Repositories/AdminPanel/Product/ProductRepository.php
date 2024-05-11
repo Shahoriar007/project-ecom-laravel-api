@@ -42,13 +42,19 @@ class ProductRepository
         }
     }
 
-    public function index($show, $sort, $search)
+    public function index($show, $sort, $search, $filterStatus)
     {
         $query  = $this->model->query()->with(['labels', 'category']);
         $query->orderBy('id', 'desc');
 
         if (!empty($search)) {
             $query->where('name', 'LIKE', "%$search%");
+        }
+
+        if (!empty($filterStatus) && $filterStatus == 'active') {
+            $query->where('status', 1);
+        }elseif (!empty($filterStatus) && $filterStatus == 'inactive') {
+            $query->where('status', 0);
         }
 
         // sort functionality
@@ -256,6 +262,23 @@ class ProductRepository
         }
     }
 
+    public function modalTwoUpdate($validated, $id)
+    {
+        info($validated);
+        try {
+            $model = $this->model->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Product Not Found');
+        }
+
+        try {
+            $model->update($validated);
+            return $model;
+        } catch (\Throwable $th) {
+            throw new UpdateResourceFailedException('Product Update Failed');
+        }
+    }
+
 
 
     public function delete($id)
@@ -268,7 +291,11 @@ class ProductRepository
         }
 
         try {
-            $data->delete();
+            if ($data->status == 1) {
+                throw new DeleteResourceFailedException('Active Product Can Not Be Deleted');
+            }else{
+                $data->delete();
+            }
         } catch (\Throwable $th) {
             throw new DeleteResourceFailedException('Product Delete Failed');
         }

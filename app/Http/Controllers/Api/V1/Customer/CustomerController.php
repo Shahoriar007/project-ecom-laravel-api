@@ -19,12 +19,12 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-        info($request);
         $show = $request->input('show', 10);
         $sort = $request->input('sort', []);
         $search = $request->input('q');
+        $filter = $request->input('filterStatus');
 
-        $data = $this->repository->index($show, $sort, $search);
+        $data = $this->repository->index($show, $sort, $search, $filter);
 
         return $this->response->paginator($data, new CustomerTransformer());
     }

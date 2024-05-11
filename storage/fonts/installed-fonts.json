@@ -1,0 +1,13 @@
+{
+    "noto sans bengali": {
+        "100": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_100_2a138c4e214c15a6fe3bbffff8131974",
+        "200": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_200_2f861e0e933d533ab0960c1f25e5ec69",
+        "300": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_300_c6f3278d9eb06ba53877c17458b634ac",
+        "normal": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_normal_9285346d1e124c6ce3587a9f546cbbf1",
+        "500": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_500_d473dbe2db8b05eb82b170e035f9c146",
+        "600": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_600_9f9fca82aa3bb2c311a35044a41d7367",
+        "bold": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_bold_8ebfa9984024649fcb8cf004592feb5f",
+        "800": "\/home\/vagrant\/code\/project-ecom-laravel-api\/storage\/fonts\/noto_sans_bengali_800_3445c419e543489b955be3e71221de89",
+        "900": "noto_sans_bengali_900_df740111ce7a5287a501da7bc8714122"
+    }
+}

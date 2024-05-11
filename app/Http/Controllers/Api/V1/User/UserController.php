@@ -28,8 +28,9 @@ class UserController extends Controller
         $show = $request->input('show', 10);
         $sort = $request->input('sort', []);
         $search = $request->input('q');
+        $filterStatus = $request->input('filterStatus');
 
-        $data = $this->repository->index($show, $sort, $search);
+        $data = $this->repository->index($show, $sort, $search, $filterStatus);
 
         return $this->response->paginator($data, new UserTransformer());
     }
