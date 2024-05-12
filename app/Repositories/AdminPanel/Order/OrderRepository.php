@@ -6,12 +6,14 @@ namespace App\Repositories\AdminPanel\Order;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\FollowUp;
+use App\Models\MasterSetting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Models\DatabaseNotification;
-use App\Models\FollowUp;
-use App\Models\MasterSetting;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Storage;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Notification;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -389,6 +391,57 @@ class OrderRepository
             return $followUpData;
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Follow Up Message Not Found');
+        }
+    }
+
+    public function exportDatabase()
+    {
+        try {
+            // Database credentials (replace with your actual configuration)
+            $host = env('DB_HOST');
+            $database = env('DB_DATABASE');
+            $username = env('DB_USERNAME');
+            $password = env('DB_PASSWORD');
+
+            // Optional: Customize filename and path (consider storing outside public directory)
+            $filename = 'database_export_' . date('Y-m-d_His') . '.sql';
+            $storagePath = storage_path('app/database_exports'); // Example path
+
+            // Construct the command
+            $command = sprintf(
+                'mysqldump -h %s -u %s -p%s %s > %s',
+                escapeshellarg($host),
+                escapeshellarg($username),
+                escapeshellarg($password),
+                escapeshellarg($database),
+                escapeshellarg($storagePath . '/' . $filename)
+            );
+
+            // Run the command
+            $process = Process::fromShellCommandline($command);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new \Exception('Failed to export database: ' . $process->getErrorOutput());
+            }
+
+            // Store the exported SQL file
+            Storage::put($storagePath . '/' . $filename, $process->getOutput());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Database export successful!',
+                'filename' => $filename,
+            ]);
+        } catch (\Throwable $e) {
+            // Log the error for future reference
+            info('Database export failed: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'error' => 'Database export failed',
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }

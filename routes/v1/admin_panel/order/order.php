@@ -10,6 +10,10 @@ $api->version('v1', function ($api) {
     $api->get('customer/{id}/total-order-amount', [OrderController::class, 'totalOrderAmount']);
     $api->get('order-delivery-charge', [OrderController::class, 'getDeliveryCharge']);
 
+    // export db
+    $api->get('/export-database', [OrderController::class, 'exportDatabase']);
+
+
 
     $api->group(['middleware' => 'jwt.auth'], function ($api) {
         $api->get('orders/all', [OrderController::class, 'index']);

@@ -119,4 +119,11 @@ class OrderController extends Controller
         return $this->response->item($data, new FollowUpTransformer());
     }
 
+    // export database
+    public function exportDatabase(Request $request)
+    {
+        $data = $this->repository->exportDatabase($request);
+        return $data;
+    }
+
 }
