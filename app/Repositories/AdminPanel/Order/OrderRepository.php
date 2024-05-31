@@ -316,7 +316,7 @@ class OrderRepository
             $totalPending1Count = $this->model->where('customer_id', $id)->where('status', 'pending-1')->count();
             $totalPending2Count = $this->model->where('customer_id', $id)->where('status', 'pending-2')->count();
             $totalProcessingCount = $this->model->where('customer_id', $id)->where('status', 'processing')->count();
-            $totalPackagingCount = $this->model->where('customer_id', $id)->where('status', 'packaging')->count();
+            $totalPackagingCount = $this->model->where('customer_id', $id)->where('status', 'packing')->count();
             $totalShippingCount = $this->model->where('customer_id', $id)->where('status', 'shipping')->count();
             $totalOnTheWayCount = $this->model->where('customer_id', $id)->where('status', 'on_the_way')->count();
             $totalInReviewCount = $this->model->where('customer_id', $id)->where('status', 'in_review')->count();
