@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\DatabaseNotification;
 use App\Models\FollowUp;
 use App\Models\MasterSetting;
+use App\Models\UserActivity;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\NewOrderNotification;
 use Illuminate\Support\Facades\Notification;
@@ -25,9 +26,11 @@ class OrderRepository
     private DatabaseNotification $notificationModel;
     private MasterSetting $masterSetting;
     private FollowUp $followUp;
+    private UserActivity $userActivity;
 
 
-    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel, MasterSetting $masterSetting, FollowUp $followUp)
+
+    public function __construct(Order $model, Customer $customerModel, User $user, DatabaseNotification $notificationModel, MasterSetting $masterSetting, FollowUp $followUp, UserActivity $userActivity)
     {
         $this->model = $model;
         $this->customerModel = $customerModel;
@@ -35,6 +38,7 @@ class OrderRepository
         $this->notificationModel = $notificationModel;
         $this->masterSetting = $masterSetting;
         $this->followUp = $followUp;
+        $this->userActivity = $userActivity;
     }
 
 
@@ -204,9 +208,16 @@ class OrderRepository
         try {
             $order = $this->model->findOrFail($request->id);
 
+            // $userId = Auth::user()->id;
+            // $orderId = $order->id;
+            // $previousStatus = $order->status;
+
             $order->update([
                 'status' => $request->status
             ]);
+
+            // $newStatus = $request->status;
+
             return "Order Status Updated";
         } catch (\Throwable $th) {
             throw new NotFoundHttpException('Not Found');
@@ -262,19 +273,33 @@ class OrderRepository
 
     public function statusChangeMultiple($ids, $status)
     {
-        try {
+        return DB::transaction(function () use ($ids, $status) {
+            try {
+                $orders = $this->model->whereIn('id', $ids)->get();
+                $userId = Auth::user()->id;
 
-            $orders = $this->model->whereIn('id', $ids)->get();
+                foreach ($orders as $order) {
+                    $orderId = $order->id;
+                    $previousStatus = $order->status;
 
-            foreach ($orders as $order) {
-                $order->update([
-                    'status' => $status
-                ]);
+                    $order->update([
+                        'status' => $status
+                    ]);
+
+                    $newStatus = $status;
+
+                    $this->userActivity->create([
+                        'user_id' => $userId,
+                        'order_id' => $orderId,
+                        'previous_order_status' => $previousStatus,
+                        'current_order_status' => $newStatus,
+                    ]);
+                }
+                return "Order Status Updated";
+            } catch (\Throwable $th) {
+                throw new NotFoundHttpException('Not Found');
             }
-            return "Order Status Updated";
-        } catch (\Throwable $th) {
-            throw new NotFoundHttpException('Not Found');
-        }
+        });
     }
 
     public function totalOrderAmount($id)

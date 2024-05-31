@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\V1\User;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\StoreUserRequest;
-use App\Http\Requests\User\UpdateUserRequest;
 use App\Repositories\UserRepository;
 use App\Transformers\UserTransformer;
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+use App\Transformers\UserActivityTransformer;
 
 class UserController extends Controller
 {
@@ -127,4 +128,31 @@ class UserController extends Controller
 
         return $this->response->collection($data, new UserTransformer());
     }
+
+    public function updateStatus($id)
+    {
+        $data = $this->repository->updateStatus($id);
+        return $this->response->item($data, new UserTransformer());
+    }
+
+    public function restore(Request $request)
+    {
+        $this->repository->restore($request->id);
+        return $this->response()->noContent();
+    }
+
+    public function userActivityIndex(Request $request, $id)
+    {
+        $show = $request->input('show', 10);
+        $sort = $request->input('sort', []);
+        $search = $request->input('q');
+        $rangeDate = $request->input('rangeDate');
+
+        $data = $this->repository->userActivityIndex($show, $sort, $search, $id, $rangeDate);
+
+        return $this->response->paginator($data, new UserActivityTransformer());
+    }
+
+
+
 }

@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Models\User;
+use App\Models\UserActivity;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Dingo\Api\Exception\StoreResourceFailedException;
@@ -18,12 +19,14 @@ class UserRepository
     private User $model;
 
     private Role $roleModel;
+    private UserActivity $userActivity;
 
-    public function __construct(User $model, Role $roleModel)
+    public function __construct(User $model, Role $roleModel, UserActivity $userActivity)
     {
         $this->model = $model;
 
         $this->roleModel = $roleModel;
+        $this->userActivity = $userActivity;
     }
 
     public function index($show, $sort, $search, $filterStatus)
@@ -40,6 +43,9 @@ class UserRepository
         }
         else if(!empty($filterStatus) &&  $filterStatus == 'inactive'){
             $query->where('status', 0);
+        }
+        else if(!empty($filterStatus) &&  $filterStatus == 'trashed'){
+            $query->onlyTrashed();
         }
 
         foreach ($sort as $key => $value) {
@@ -191,11 +197,17 @@ class UserRepository
             throw new NotFoundHttpException('Not Found');
         }
 
-        try {
-            $user->delete();
-        } catch (\Throwable $th) {
-            throw new DeleteResourceFailedException('Delete Failed');
+        if($user->status == 1){
+            throw new DeleteResourceFailedException('Delete Failed! First Inactivated the User');
+        }else{
+            try {
+                $user->delete();
+            } catch (\Throwable $th) {
+                throw new DeleteResourceFailedException('Delete Failed');
+            }
         }
+
+
     }
 
     public function departmentUsers($show, $sort, $search, $id)
@@ -222,5 +234,69 @@ class UserRepository
         $query = $this->model->query()->where('department_id', '!=', $id)->orWhereNull('department_id');
         $query = $query->where('name', 'LIKE', "%$search%")->get();
         return $query;
+    }
+
+    public function updateStatus($id)
+    {
+        try {
+            $data = $this->model->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+
+        try {
+            $data->update([
+                'status' => !$data->status
+            ]);
+            return $data;
+        } catch (\Throwable $th) {
+            throw new UpdateResourceFailedException('User Status Update Failed');
+        }
+    }
+
+    public function restore($id)
+    {
+
+        try {
+            $data = $this->model->onlyTrashed()->findOrFail($id);
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+
+        try {
+            $data =  $data->restore();
+            return $data;
+        } catch (\Throwable $th) {
+            throw new UpdateResourceFailedException('Restore Failed');
+        }
+    }
+
+    public function userActivityIndex($show, $sort, $search, $id, $rangeDate)
+    {
+        try {
+            $query = $this->userActivity->query()->where('user_id', $id);
+
+            if (!empty($rangeDate)) {
+
+                if (strpos($rangeDate, ' to ') !== false) {
+                    // $rangeDate is a range like "2024-03-04 to 2024-03-06"
+                    $date = explode(' to ', $rangeDate);
+                    // Add one day to the end date
+                    $endDate = date('Y-m-d', strtotime($date[1] . ' +1 day'));
+                    $query->whereBetween('created_at', [$date[0], $endDate]);
+                } else {
+                    // $rangeDate is a single date like "2024-03-04"
+                    $query->whereDate('created_at', $rangeDate);
+                }
+            }
+
+            $query->orderBy('order_id');
+
+
+        } catch (\Throwable $th) {
+            throw new NotFoundHttpException('Not Found');
+        }
+
+        return $query->paginate($show);
     }
 }

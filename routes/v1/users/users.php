@@ -17,6 +17,11 @@ $api->version('v1', function ($api) {
             $api->post('/', [AuthController::class, 'user']);
             $api->match(['PUT', 'PATCH'], '/profile/general/update', [ProfileController::class, 'generalUpdate']);
             $api->match(['PUT', 'PATCH'], '/profile/password/update', [ProfileController::class, 'passwordUpdate']);
+
+            $api->get('/status/update/{id}', [UserController::class, 'updateStatus']);
+            $api->match(['PUT', 'PATCH'], '/{id}/restore', [UserController::class, 'restore']);
+
+            $api->get('/{id}/activities', [UserController::class, 'userActivityIndex']);
         });
     });
 });
