@@ -157,12 +157,14 @@ class OrderRepository
         }
 
         if (!empty($search)) {
-            $query->where('detail_address', 'LIKE', "%$search%")
-                ->orWhere('large_order_id', 'LIKE', "%$search%")
-                ->orWhereHas('customer', function ($query) use ($search) {
-                    $query->where('full_name', 'LIKE', "%$search%")
-                        ->orWhere('phone', 'LIKE', "%$search%");
-                });
+            $query->where(function ($q) use ($search) {
+                $q->where('detail_address', 'LIKE', "%$search%")
+                    ->orWhere('large_order_id', 'LIKE', "%$search%")
+                    ->orWhereHas('customer', function ($query) use ($search) {
+                        $query->where('full_name', 'LIKE', "%$search%")
+                            ->orWhere('phone', 'LIKE', "%$search%");
+                    });
+            });
         }
 
         if (!empty($rangeDate)) {
@@ -182,8 +184,12 @@ class OrderRepository
         if (!empty($filterStatus) && $filterStatus == 'all') {
             $query->where('status', '!=', 'deleted');
         } elseif (!empty($filterStatus)) {
+
+            info($filterStatus);
             $query->where('status', $filterStatus);
         }
+
+        info($query->get());
 
         // foreach ($sort as $key => $value) {
         //     $decode_data = json_decode($value);
