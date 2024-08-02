@@ -276,6 +276,7 @@ class UserRepository
         try {
             $query = $this->userActivity->query()->where('user_id', $id);
 
+
             if (!empty($rangeDate)) {
 
                 if (strpos($rangeDate, ' to ') !== false) {

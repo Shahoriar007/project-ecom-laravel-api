@@ -185,11 +185,9 @@ class OrderRepository
             $query->where('status', '!=', 'deleted');
         } elseif (!empty($filterStatus)) {
 
-            info($filterStatus);
             $query->where('status', $filterStatus);
         }
 
-        info($query->get());
 
         // foreach ($sort as $key => $value) {
         //     $decode_data = json_decode($value);
